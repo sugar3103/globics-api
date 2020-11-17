@@ -1,19 +1,23 @@
 const express = require("express");
-const userControllers = require("../controllers/userControllers");
 const router = express.Router();
 const AuthMiddleWare = require("../middleware/AuthMiddleware");
+const { createAdmin, readAdmin } = require("../controllers/admin");
+const { logout } = require("../controllers/logout");
 
-//  * Init all APIs on your application
-//  * @param {*} app from express
-//
+/**
+ *
+ * @param {*} app // get from app.js
+ */
+
 let initAPIs = (app) => {
-  router.post("/profile", userControllers.profile);
+  router.post("/create-admin", createAdmin);
+  router.post("/login-admin", readAdmin);
+  router.post("/logout", logout);
+
   // Sử dụng authMiddleware.isAuth trước những api cần xác thực
   router.use(AuthMiddleWare.isAuth);
 
   // List Protect APIs:
-
-  // router.post("/user-bds-list", UserController.userBdsList);
 
   return app.use("/", router);
 };

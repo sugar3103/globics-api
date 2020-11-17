@@ -1,7 +1,5 @@
 const mongodb = require("mongodb");
-const config = require("../../config");
-
-// const jwtHelper = require("../helpers/jwt.helper");
+const config = require("../../../config");
 
 const mongoClient = mongodb.MongoClient;
 
@@ -9,9 +7,17 @@ const mongoClient = mongodb.MongoClient;
 //     config.access_secret ||
 //     "access-token-secret-myhomes-abcdefghijklmnopqrstuvwxyz-0987654321";
 
-// const period = 5 * 60; //5 minutes;
+const period = 60; // 1 minute
 
-let profile = async (req, res) => {
+/**
+ *
+ * @param {name : string, pass: string} req
+ * @param {success: boolean, userRight: string} res
+ */
+// api post /admin-create
+let create = async (req, res) => {
+  // console.log("req body ", req.body);
+
   // const cookie =
   //     req.headers.cookie &&
   //     !req.headers["user-agent"].includes("Expo") &&
@@ -27,10 +33,24 @@ let profile = async (req, res) => {
   // .set("Cache-control", `public, max-age=${period}`)
   // .status(200)
   // .json({ decoded: decoded.data });
-  console.log("req body ", req.body);
-  res.json({ success: "data from profile" });
+  res
+    .set("Cache-control", `public, max-age=${5 * period}`)
+    .status(200)
+    .json({ success: req.body, username: "sugar" });
 };
 
+let decoded = (req, res) => {};
+
+let read = (req, res) => {};
+
+let update = (req, res) => {};
+
+let deleted = (req, res) => {};
+
 module.exports = {
-  profile,
+  create,
+  decoded,
+  read,
+  update,
+  deleted,
 };

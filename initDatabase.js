@@ -8,6 +8,7 @@ const createCollection = (collecttionName) => {
     (err, db) => {
       if (err) throw err;
       const dbo = db.db("globics");
+      dbo.admin.createIndex({ collecttionName: 1, unique: true });
       dbo.createCollection(
         collecttionName,
         // { autoIndexId: true }, // removed from 3.4
@@ -21,7 +22,6 @@ const createCollection = (collecttionName) => {
   );
 };
 
-createCollection("users");
-createCollection("bands");
+createCollection("admin");
 
 // module.exports = createCollection;
