@@ -1,8 +1,9 @@
 const bcrypt = require("bcrypt");
+
 const connection = require("../../helpers/connection");
+const responseToken = require("../../helpers/responseToken");
 
 /**
- *
  * @param {username : string, password: string, canWrite: boolean} req
  */
 // api post /admin-create
@@ -45,6 +46,7 @@ let createAdmin = async (req, res) => {
 // api post /login-admin
 let readAdmin = (req, res) => {
   const { username, password } = req.body;
+  const collectionName = "admin";
 
   connection((result) => {
     const { err, db, dbo } = result;
@@ -52,30 +54,25 @@ let readAdmin = (req, res) => {
       res.json({ error: "error with connection" });
     } else
       dbo
-        .collection("admin")
+        .collection(collectionName)
         .findOne({ username })
         .then((response) => {
           if (response) {
-            bcrypt.compareSync(password, response.password) // responseToken(response, db);
-              ? // responseToken(response, db, req, res) :
-                res.json({ success: true, message: "logged in success" })
+            bcrypt.compareSync(password, response.password)
+              ? responseToken(response, collectionName, db, dbo, req, res)
               : res.status(200).json({
                   success: false,
                   error: "username or password incorrect",
                 });
           } else {
+            db.close();
             res.status(200).json({
               success: false,
               error: "username or password incorrect", //do NOT res no user found *risk
             });
           }
-
-          db.close();
         })
-        .catch((error) => {
-          // console.log("error", error); // have to use logging here
-          res.json({ success: false, error });
-        });
+        .catch((err) => res.json({ success: false, err }));
   });
 };
 

@@ -11,7 +11,6 @@ app.disable("x-powered-by");
 app.use(function (req, res, next) {
   restrict(req, res, next);
 });
-
 // set cors for browser
 app.use(corsMiddleWare());
 // get body from request

@@ -10,7 +10,6 @@ const mongoClient = mongodb.MongoClient;
 const period = 60; // 1 minute
 
 /**
- *
  * @param {name : string, pass: string} req
  * @param {success: boolean, userRight: string} res
  */

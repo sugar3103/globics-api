@@ -1,32 +1,32 @@
 const config = require("../../../config");
 
-const { domain, ACTK, ACLE, RFTK, RFLE } = config;
+const { domain, ACTKName, ACLEName, RFTKName, RFLEName, RDTK } = config;
 
 let logout = (req, res) => {
   return res
-    .cookie(ACTK, "removed", {
+    .cookie(ACTKName, "removed", {
       domain: domain,
       maxAge: 0, // 0 in milisecond
       httpOnly: true,
       secure: true,
       sameSite: true,
     })
-    .cookie(RFTK, "removed", {
+    .cookie(RFTKName, "removed", {
       domain: domain,
       maxAge: 0, // 0 in milisecond
       httpOnly: true,
       secure: true,
       sameSite: true,
     })
-    .cookie(ACLE, "removed", {
+    .cookie(ACLEName, "removed", {
       domain: domain,
       maxAge: 0, // 0 in milisecond
     })
-    .cookie(RFLE, "removed", {
+    .cookie(RFLEName, "removed", {
       domain: domain,
       maxAge: 0, // 0 in milisecond
     })
-    .cookie("MH_RD_TK", "removed", {
+    .cookie(RDTK, "removed", {
       domain: domain,
       maxAge: 0, // 0 in milisecond
       httpOnly: true,

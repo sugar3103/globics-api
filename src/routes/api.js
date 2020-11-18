@@ -1,24 +1,25 @@
 const express = require("express");
 const router = express.Router();
 const { createAdmin, readAdmin } = require("../controllers/admin");
+const { decodedAPI } = require("../controllers/decoded");
 const { logout } = require("../controllers/logout");
+const renewToken = require("../helpers/renewToken");
 const { isAuth } = require("../middleware/authMiddleware");
 
 /**
  *
- * @param {*} app // get from app.js
+ * @param {app} props // get from app.js
  */
 
 let initAPIs = (app) => {
+  router.post("/renew-token", renewToken);
   router.post("/create-admin", createAdmin);
   router.post("/login-admin", readAdmin);
   router.post("/logout", logout);
 
-  // Sử dụng authMiddleware.isAuth trước những api cần xác thực
   router.use(isAuth);
 
-  // List Protect APIs:
-
+  router.post("/decoded", decodedAPI);
   return app.use("/", router);
 };
 

@@ -18,9 +18,15 @@ describe("Test the admin controller", () => {
   test("return true with correct username and password", () => {
     return request(app)
       .post("/login-admin")
+      .set({ "user-agent": "web" })
       .send(correctAdmin)
       .then((res) => {
-        expect(res.body).toEqual(expect.objectContaining({ success: true }));
+        expect(res.header["set-cookie"].length).toBeGreaterThan(0);
+        expect(res.body).toEqual(
+          expect.objectContaining({
+            success: true,
+          })
+        );
         expect(res.statusCode).toBe(200);
       });
   });
@@ -28,8 +34,10 @@ describe("Test the admin controller", () => {
   test("return false with wrong username or password correct", () => {
     return request(app)
       .post("/login-admin")
+      .set({ "user-agent": "web" })
       .send(wrongAdmin)
       .then((res) => {
+        expect(res.header["set-cookie"]).toBe(undefined);
         expect(res.body).toEqual(expect.objectContaining({ success: false }));
         expect(res.statusCode).toBe(200);
       });

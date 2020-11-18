@@ -1,64 +1,53 @@
-// const jwtHelper = require("../helpers/jwt.helper");
-
 const config = require("../../../config");
+const { verifyToken } = require("../../helpers/jwtHelper");
 
-// const debug = console.log.bind(console);
-// Mã secretKey này phải được bảo mật tuyệt đối, các bạn có thể lưu vào biến môi trường hoặc file
-const accessTokenSecret =
-  config.access_secret ||
-  "access-token-secret-myhomes-abcdefghijklmnopqrstuvwxyz-0987654321";
+const { ACTKName } = config;
 
 /**
  * Middleware: Authorization user by Token
- * @param {*} req
- * @param {*} res
- * @param {*} next
+ * @param {req, res , next} props
  */
 
 let isAuth = async (req, res, next) => {
-  // Lấy token được gửi lên từ phía client, thông thường tốt nhất là các bạn nên truyền token vào header
-
+  // Get token from client which is attached in header, dot NOT send from body
   // console.log("user headers", req.headers);
 
   const cookie =
     req.headers.cookie &&
     !req.headers["user-agent"].includes("Expo") &&
     !req.headers["user-agent"].includes("okhttp")
-      ? req.headers.cookie.split("MH_AC_TK=")[1].split(";")[0].replace(/['"]+/g)
+      ? req.headers.cookie
+          .split(`${ACTKName}=`)[1]
+          .split(";")[0]
+          .replace(/['"]+/g)
       : null;
 
   const tokenFromClient = req.headers.authorization || cookie;
 
+  // if Token exist
   if (tokenFromClient) {
-    // Nếu tồn tại token
     try {
-      // Thực hiện giải mã token xem có hợp lệ hay không?
-      // const decoded = await jwtHelper.verifyToken(
-      //     tokenFromClient,
-      //     accessTokenSecret
-      // );
+      // try to decode token
+      const decoded = await verifyToken(tokenFromClient);
 
-      // Nếu token hợp lệ, lưu thông tin giải mã được vào đối tượng req, dùng cho các xử lý ở phía sau.
-      // req.jwtDecoded = decoded;
+      // If token is valid, save to to req
+      req.jwtDecoded = decoded;
 
-      // Cho phép req đi tiếp sang controller.
+      // process to next if token valid.
       next();
     } catch (error) {
-      // Nếu giải mã gặp lỗi: Không đúng, hết hạn...etc:
-      // Lưu ý trong dự án thực tế hãy bỏ dòng debug bên dưới, mình để đây để debug lỗi cho các bạn xem thôi
-      // debug("Error while verify token:", error);
-      return res.status(200).json({
+      // if decode token got problem such as : expired, not correct, ...
+      return res.status(403).json({
+        success: false,
         message: "Unauthorized.",
       });
     }
   } else {
-    // Không tìm thấy token trong request
+    // token not found from request
     return res.status(403).send({
       message: "No token provided.",
     });
   }
 };
 
-module.exports = {
-  isAuth: isAuth,
-};
+module.exports = { isAuth };
