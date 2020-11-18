@@ -3,11 +3,6 @@ const config = require("../../../config");
 
 const { dbName } = config;
 
-/**
- *
- * @param {username : string, password: string, canWrite: boolean} req
- */
-// api post /admin-create
 let connection = async (loadsuccess) => {
   MongoClient.connect(
     config.url,

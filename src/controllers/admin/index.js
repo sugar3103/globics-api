@@ -1,5 +1,5 @@
 const bcrypt = require("bcrypt");
-const connection = require("../connection");
+const connection = require("../../helpers/connection");
 
 /**
  *
@@ -22,7 +22,7 @@ let createAdmin = async (req, res) => {
   connection((result) => {
     const { err, db, dbo } = result;
     if (err) {
-      res.json({ error: "error with connection" });
+      res.json({ success: false, error: "error with connection" });
     } else
       dbo
         .collection("admin")
@@ -33,18 +33,16 @@ let createAdmin = async (req, res) => {
         })
         .catch((error) => {
           // console.log("error", error); // have to use logging here
-          res.json({ error });
+          res.json({ success: false, error });
         });
   });
 };
 
-let decodedAdmin = (req, res) => {
-  // res
-  //   .set("Cache-control", `public, max-age=${60 * period}`)
-  //   .status(200)
-  //   .json({ success: req.body, username: "sugar" });
-};
-
+/**
+ *
+ * @param {username : string, password: string} req
+ */
+// api post /login-admin
 let readAdmin = (req, res) => {
   const { username, password } = req.body;
 
@@ -76,7 +74,7 @@ let readAdmin = (req, res) => {
         })
         .catch((error) => {
           // console.log("error", error); // have to use logging here
-          res.json({ error });
+          res.json({ success: false, error });
         });
   });
 };
@@ -87,7 +85,6 @@ let deleteAdmin = (req, res) => {};
 
 module.exports = {
   createAdmin,
-  decodedAdmin,
   readAdmin,
   updateAdmin,
   deleteAdmin,

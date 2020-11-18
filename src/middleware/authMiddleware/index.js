@@ -1,6 +1,6 @@
 // const jwtHelper = require("../helpers/jwt.helper");
 
-const config = require("../../config");
+const config = require("../../../config");
 
 // const debug = console.log.bind(console);
 // Mã secretKey này phải được bảo mật tuyệt đối, các bạn có thể lưu vào biến môi trường hoặc file

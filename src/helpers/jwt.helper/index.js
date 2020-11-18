@@ -50,7 +50,17 @@ let verifyToken = (token, secretKey) => {
   });
 };
 
+/**
+ * This module used for decode jwt token
+ * @param {*} token
+ * @param {*} secretKey
+ */
+let decodeToken = (token, secretKey) => {
+  return new Promise((resolve, reject) => {});
+};
+
 module.exports = {
-  generateToken: generateToken,
-  verifyToken: verifyToken,
+  generateToken,
+  verifyToken,
+  decodeToken,
 };

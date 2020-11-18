@@ -1,8 +1,8 @@
 const express = require("express");
 const router = express.Router();
-const AuthMiddleWare = require("../middleware/AuthMiddleware");
 const { createAdmin, readAdmin } = require("../controllers/admin");
 const { logout } = require("../controllers/logout");
+const { isAuth } = require("../middleware/authMiddleware");
 
 /**
  *
@@ -15,7 +15,7 @@ let initAPIs = (app) => {
   router.post("/logout", logout);
 
   // Sử dụng authMiddleware.isAuth trước những api cần xác thực
-  router.use(AuthMiddleWare.isAuth);
+  router.use(isAuth);
 
   // List Protect APIs:
 
