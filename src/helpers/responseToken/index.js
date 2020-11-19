@@ -1,7 +1,7 @@
 const config = require("../../../config");
 const { generateToken } = require("../jwtHelper");
 
-const { domain, ACTKName, RFTKName, ACLEName, RFLEName, RDTK } = config;
+const { domain, ACTKName, RFTKName, ACLEName, RFLEName, RDTK, secure } = config;
 
 // declare time for token
 const milisecond = 60 * 60 * 1000; // 1 hour in milisecond
@@ -84,33 +84,33 @@ const responseToken = async (data, collectionName, db, dbo, req, res) => {
               domain: domain,
               maxAge: 1 * milisecond, // 1 hour in milisecond
               httpOnly: true,
-              secure: true,
+              secure,
               sameSite: true,
             })
             .cookie(RFTKName, refreshToken, {
               domain: domain,
               maxAge: 3650 * 24 * milisecond, // 10 years in milisecond
               httpOnly: true,
-              secure: true,
+              secure,
               sameSite: true,
             })
             .cookie(ACLEName, exp1Hour, {
               domain: domain,
               maxAge: 1 * milisecond,
-              // secure: true,
+              // secure,
               // sameSite: true,
             })
             .cookie(RFLEName, exp10Year, {
               domain: domain,
               maxAge: 3650 * 24 * milisecond,
-              // secure: true,
+              // secure,
               // sameSite: true,
             })
             .cookie(RDTK, mathRan, {
               domain: domain,
               maxAge: 365 * 24 * milisecond,
               httpOnly: true,
-              secure: true,
+              // secure,
             })
             .json({
               accessToken,

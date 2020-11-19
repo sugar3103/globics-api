@@ -48,6 +48,8 @@ let readAdmin = (req, res) => {
   const { username, password } = req.body;
   const collectionName = "admin";
 
+  // console.log("username, password", username, password);
+
   connection((result) => {
     const { err, db, dbo } = result;
     if (err) {

@@ -2,7 +2,7 @@ const config = require("../../../config");
 const connection = require("../connection");
 const { verifyToken, generateToken } = require("../jwtHelper");
 
-const { domain, ACSC, RFSC, ACTKName, ACLEName, ACLE, RFTKName } = config;
+const { domain, ACTKName, ACLEName, RFTKName, secure } = config;
 const milisecond = 60 * 60 * 1000; // 1 hour in milisecond
 const exp1Hour = new Date().getTime() + milisecond; // exp time in the next 1 hour
 
@@ -65,7 +65,7 @@ let renewToken = async (req, res) => {
                   domain: domain,
                   maxAge: 1 * milisecond, // 1 hour in milisecond
                   httpOnly: true,
-                  secure: true,
+                  secure,
                   sameSite: true,
                 })
                 .cookie(ACLEName, exp1Hour, {
