@@ -31,7 +31,7 @@ const responseToken = async (data, collectionName, db, dbo, req, res) => {
     : "web";
 
   // create access Token with life
-  const accessToken = await generateToken(data, (isRefresh = false));
+  const accessToken = await generateToken(data);
   // create refresh Token with life
   const refreshToken = await generateToken(data, (isRefresh = true));
 
@@ -46,6 +46,7 @@ const responseToken = async (data, collectionName, db, dbo, req, res) => {
     )
     .then((responsePull) => {
       // add new token to tokenList and set last modified
+
       dbo
         .collection("tokens")
         .updateOne(

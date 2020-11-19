@@ -1,7 +1,14 @@
+const config = require("../../../config");
+const connection = require("../connection");
+const { verifyToken, generateToken } = require("../jwtHelper");
+
+const { domain, ACSC, RFSC, ACTKName, ACLEName, ACLE, RFTKName } = config;
+const milisecond = 60 * 60 * 1000; // 1 hour in milisecond
+const exp1Hour = new Date().getTime() + milisecond; // exp time in the next 1 hour
+
 /**
  * controller renewToken
  * @param {*} req
- * @param {*} res
  */
 let renewToken = async (req, res) => {
   const userAgent = req.headers["user-agent"];
@@ -15,61 +22,31 @@ let renewToken = async (req, res) => {
 
   // User gửi mã refresh token kèm theo trong body
   const cookie = req.headers.cookie
-    ? req.headers.cookie.split("MH_RF_TK=")[1].split(";")[0].replace(/['"]+/g)
+    ? req.headers.cookie
+        .split(`${RFTKName}=`)[1]
+        .split(";")[0]
+        .replace(/['"]+/g)
     : null;
 
   const refreshTokenFromClient = req.headers.authorization || cookie;
-  // console.log("req header refresh token", req.headers);
-  const responseAccess = async () => {
-    try {
-      // Verify kiểm tra tính hợp lệ của cái refreshToken và lấy dữ liệu giải mã decoded
-      const decoded = await jwtHelper.verifyToken(
-        refreshTokenFromClient,
-        refreshTokenSecret
-      );
 
-      // Thông tin user lúc này các bạn có thể lấy thông qua biến decoded.data
-      // có thể mở comment dòng debug bên dưới để xem là rõ nhé.
-      // debug("decoded: ", decoded);
-      const userData = decoded.data;
-
-      //    `Thực hiện tạo mã Token trong bước gọi refresh Token, [thời gian sống vẫn là 1 giờ.]`
-
-      const accessToken = await jwtHelper.generateToken(
-        userData,
-        accessTokenSecret,
-        accessTokenLife
-      );
-      // gửi token mới về cho người dùng
-      return res
-        .cookie("MH_AC_TK", accessToken, {
-          domain: config.domain,
-          maxAge: 1 * milisecond, // 1 hour in milisecond
-          httpOnly: true,
-          secure: true,
-          sameSite: true,
-        })
-        .cookie("MH_A_L", exp1Hour, {
-          domain: config.domain,
-          maxAge: 1 * milisecond,
-          // secure: true,
-          // sameSite: true,
-        })
-        .json({ accessToken, accessLife: Date.now() + 1 * milisecond });
-    } catch (error) {
-      res.status(403).json({
-        message: "Invalid refresh token.",
-      });
-    }
-  };
-  // Nếu như tồn tại refreshToken truyền lên và nó cũng nằm trong tokenList của chúng ta
+  // IF refreshToken from client match our refresh token from DB
   if (refreshTokenFromClient) {
-    mongoClient.connect(
-      config.mongoUrl,
-      { useNewUrlParser: true, useUnifiedTopology: true },
-      function (err, db) {
-        if (err) throw err;
-        db.db("myhomes")
+    // Verify the valid of the refresh token from client
+    const decoded = await verifyToken(refreshTokenFromClient, true);
+
+    // User Information now can access through userDate below
+    const userData = decoded.data;
+
+    // Renew Access Secret
+    const accessToken = await generateToken(userData);
+
+    connection((result) => {
+      const { err, db, dbo } = result;
+      if (err) {
+        res.json({ error: "error with connection" });
+      } else
+        dbo
           .collection("tokens")
           .findOne({
             refreshTokenList: {
@@ -80,17 +57,43 @@ let renewToken = async (req, res) => {
             },
           })
           .then((response) => {
+            db.close();
             if (response) {
-              responseAccess();
+              // send to client
+              res
+                .cookie(ACTKName, accessToken, {
+                  domain: domain,
+                  maxAge: 1 * milisecond, // 1 hour in milisecond
+                  httpOnly: true,
+                  secure: true,
+                  sameSite: true,
+                })
+                .cookie(ACLEName, exp1Hour, {
+                  domain: domain,
+                  maxAge: 1 * milisecond,
+                  // secure: true,
+                  // sameSite: true,
+                })
+                .json({
+                  success: true,
+                  accessToken,
+                  accessLife: Date.now() + 1 * milisecond,
+                });
             } else {
+              db.close();
               res.status(200).json({
+                success: false,
                 // can't find token in DB
                 error: `there is no refresh token in DB`,
               });
             }
-          });
-      }
-    );
+          })
+          .catch((err) =>
+            res
+              .status(403)
+              .json({ success: false, err, error: "invalid refresh token" })
+          );
+    });
   } else {
     // Không tìm thấy token trong request
     return res.status(403).send({

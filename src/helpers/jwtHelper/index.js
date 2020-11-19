@@ -3,18 +3,6 @@ const config = require("../../../config");
 
 const { ACSC, RFSC, ACLE, RFLE } = config;
 
-// AC Token Life
-const accessTokenLife = ACLE || "1h";
-// Have to keep this secret key secure
-const accessTokenSecret =
-  ACSC || "access-token-secret-myhomes-abcdefghijklmnopqrstuvwxyz-0987654321";
-
-// RF Token Life
-const refreshTokenLife = RFLE || "3650d";
-// have to keep this secret key secure
-const refreshTokenSecret =
-  RFSC || "refresh-token-secret-myhomes-abcdefghijklmnopqrstuvwxyz-0987654321";
-
 /**
  * private function generateToken
  * @param {user: object} props
@@ -26,7 +14,7 @@ let generateToken = (user, isRefresh) => {
     // define the information you want to save to the Token
     const userData = {
       _id: user._id,
-      name: user.username,
+      username: user.username,
       // phone: user.phone,
       // email: user.email,
       read: user.read,
@@ -35,10 +23,10 @@ let generateToken = (user, isRefresh) => {
     // sign and create token
     jwt.sign(
       { data: userData },
-      isRefresh ? refreshTokenSecret : accessTokenSecret,
+      isRefresh ? RFSC : ACSC,
       {
         algorithm: "HS256",
-        expiresIn: isRefresh ? refreshTokenLife : accessTokenLife,
+        expiresIn: isRefresh ? RFLE : ACLE,
       },
       (error, token) => {
         if (error) {
@@ -54,9 +42,9 @@ let generateToken = (user, isRefresh) => {
  * This module used for verify jwt token
  * @param {token} props
  */
-let verifyToken = (token) => {
+let verifyToken = (token, isRefresh) => {
   return new Promise((resolve, reject) => {
-    jwt.verify(token, accessTokenSecret, (error, decoded) => {
+    jwt.verify(token, isRefresh ? RFSC : ACSC, (error, decoded) => {
       if (error) {
         return reject(error);
       }
@@ -65,16 +53,7 @@ let verifyToken = (token) => {
   });
 };
 
-/**
- * This module used for decode jwt token
- * @param {token} props
- */
-let decodeToken = (token, secretKey) => {
-  return new Promise((resolve, reject) => {});
-};
-
 module.exports = {
   generateToken,
   verifyToken,
-  decodeToken,
 };

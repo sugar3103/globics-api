@@ -10,8 +10,7 @@ const mongoClient = mongodb.MongoClient;
 const period = 60; // 1 minute
 
 /**
- * @param {name : string, pass: string} req
- * @param {success: boolean, userRight: string} res
+ * @param {name : string, pass: string} props
  */
 // api post /admin-create
 let create = async (req, res) => {
