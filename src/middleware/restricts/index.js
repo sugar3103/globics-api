@@ -1,5 +1,7 @@
+const { devDomain } = require("../../../config.js");
+
 function restrict(req, res, next) {
-  if (req.hostname.includes("127.0.0.1")) {
+  if (req.hostname.includes(devDomain)) {
     next();
   } else res.status(401).json({ error: "no authorization found" });
 }
