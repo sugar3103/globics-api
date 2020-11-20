@@ -18,7 +18,9 @@ describe("Test the admin controller", () => {
   test("return true with correct username and password", () => {
     return request(app)
       .post("/login-admin")
-      .set({ "user-agent": "web" })
+      .set({
+        "user-agent": "web",
+      })
       .send(correctAdmin)
       .then((res) => {
         expect(res.header["set-cookie"].length).toBeGreaterThan(0);
