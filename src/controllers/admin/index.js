@@ -64,13 +64,13 @@ let readAdmin = (req, res) => {
               ? responseToken(response, collectionName, db, dbo, req, res)
               : res.status(200).json({
                   success: false,
-                  error: "username or password incorrect",
+                  error: "log in credentials incorrect",
                 });
           } else {
             db.close();
             res.status(200).json({
               success: false,
-              error: "username or password incorrect", //do NOT res no user found *risk
+              error: "log in credentials incorrect", //do NOT res no user found *risk
             });
           }
         })
