@@ -20,13 +20,14 @@ let renewToken = async (req, res) => {
     ? "mobile"
     : "web";
 
-  // User gửi mã refresh token kèm theo trong body
-  const cookie = req.headers.cookie
-    ? req.headers.cookie
-        .split(`${RFTKName}=`)[1]
-        .split(";")[0]
-        .replace(/['"]+/g)
-    : null;
+  // User send token with the headers
+  const cookie =
+    req.headers.cookie && req.headers.cookie.includes(`${RFTKName}`)
+      ? req.headers.cookie
+          .split(`${RFTKName}=`)[1]
+          .split(";")[0]
+          .replace(/['"]+/g)
+      : null;
 
   const refreshTokenFromClient = req.headers.authorization || cookie;
 

@@ -13,9 +13,7 @@ let isAuth = async (req, res, next) => {
   // console.log("user headers", req.headers);
 
   const cookie =
-    req.headers.cookie &&
-    !req.headers["user-agent"].includes("Expo") &&
-    !req.headers["user-agent"].includes("okhttp")
+    req.headers.cookie && req.headers.cookie.includes(`${ACTKName}`)
       ? req.headers.cookie
           .split(`${ACTKName}=`)[1]
           .split(";")[0]

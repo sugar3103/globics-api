@@ -7,9 +7,7 @@ const { ACTKName } = config;
 // api post /decoded
 let decodedAPI = async (req, res) => {
   const cookie =
-    req.headers.cookie &&
-    !req.headers["user-agent"].includes("Expo") &&
-    !req.headers["user-agent"].includes("okhttp")
+    req.headers.cookie && req.headers.cookie.includes(`${ACTKName}`)
       ? req.headers.cookie
           .split(`${ACTKName}=`)[1]
           .split(";")[0]
