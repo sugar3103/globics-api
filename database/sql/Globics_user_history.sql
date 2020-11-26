@@ -16,38 +16,31 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `user`
+-- Table structure for table `user_history`
 --
 
-DROP TABLE IF EXISTS `user`;
+DROP TABLE IF EXISTS `user_history`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `user` (
-  `id` int unsigned NOT NULL AUTO_INCREMENT,
-  `first_name` varchar(20) NOT NULL,
-  `last_name` varchar(20) NOT NULL,
-  `email` varchar(40) NOT NULL,
-  `social_id` varchar(100) DEFAULT NULL,
-  `password` varchar(256) NOT NULL,
-  `role` tinyint(1) NOT NULL DEFAULT '0',
-  `fcm_token` varchar(256) DEFAULT NULL,
-  `activated_at` timestamp NULL DEFAULT NULL,
-  `last_login_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  `deleted_at` timestamp NULL DEFAULT NULL,
+CREATE TABLE `user_history` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `user_id` int NOT NULL,
+  `type` varchar(16) DEFAULT NULL,
+  `value` mediumint unsigned DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id_UNIQUE` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `user`
+-- Dumping data for table `user_history`
 --
 
-LOCK TABLES `user` WRITE;
-/*!40000 ALTER TABLE `user` DISABLE KEYS */;
-INSERT INTO `user` VALUES (25,'Hai','Tran','hai.tran@terralogic.com',NULL,'PJONMFg/66eu8FxoMwe7JQ==$0bOa3Z1kP/1q1N+dcoxfzb1NUhI4lZmH0rah81G2PF7Cc5ACG9R1xf7qBNjy9M7qXRIC4AFPnkVWj+lfv385Ew==',0,NULL,'2020-11-25 22:18:47','2020-11-25 23:28:02','2020-11-25 23:28:02',NULL,'2020-11-25 22:18:00');
-/*!40000 ALTER TABLE `user` ENABLE KEYS */;
+LOCK TABLES `user_history` WRITE;
+/*!40000 ALTER TABLE `user_history` DISABLE KEYS */;
+/*!40000 ALTER TABLE `user_history` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
