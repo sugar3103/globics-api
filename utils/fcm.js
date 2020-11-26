@@ -1,5 +1,4 @@
 const FCM = require('fcm-node');
-const constants = require('../common/utils/constants');
 
 const pushNotificationAsync = async (token, title, body, type, data) => {
   let fcm = new FCM(process.env.FCM_KEY);
