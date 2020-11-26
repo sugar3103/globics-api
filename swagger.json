@@ -1,0 +1,874 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "Globics default service.",
+    "version": "1.0.0",
+    "title": "Globics API"
+  },
+  "host": "",
+  "basePath": "/api",
+  "schemes": [
+    "https",
+    "http"
+  ],
+  "paths": {
+    "/auth": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "User login",
+        "operationId": "auth",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "User object that needs to be login",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/LoginUser"
+            }
+          }
+        ],
+        "responses": {}
+      }
+    },
+    "/auth/logout": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "User logout",
+        "operationId": "auth-logout",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "type": "string",
+            "required": true,
+            "description": "Bearer xxxxxxx"
+          }
+        ],
+        "responses": {}
+      }
+    },
+    "/auth/social": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "User login via fb/google/apple",
+        "operationId": "auth-social",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Token and type",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "token": {
+                  "type": "string",
+                  "example": "EAADzMk6sTPcBALJFpe3EeeRrkgMyJKNJBKAKR2iJUSqFgR3dDV54MicdwLT9GzIzs04KVHGZC3ReU9UsBwbFoWWRyxRYpYM4ZBFaOzHBZBjZCeO5oYV8F1lLWb6sOjw4lnwm9NTwhUv3ZBbpzQRyfaaRBgQrU53zuSHjyP1L4dc5tw3IZCbHqkgcjZBCplGkZBMzE8zugC6Icbp1fAHWKOXKWlZBgxJadZAo9kJ8R5OpPLuk7J9Bg4toJO"
+                },
+                "type": {
+                  "type": "string",
+                  "example": "facebook/apple/google"
+                },
+                "id": {
+                  "type": "string",
+                  "example": "432424234"
+                },
+                "email": {
+                  "type": "string",
+                  "example": "facebook/apple/goole"
+                },
+                "first_name": {
+                  "type": "string",
+                  "example": "Apple name"
+                },
+                "last_name": {
+                  "type": "string",
+                  "example": "Last name"
+                }
+              }
+            }
+          }         
+        ],
+        "responses": {}
+      }
+    },
+    "/auth/refresh": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Refresh a new access token",
+        "operationId": "auth/refresh",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "type": "string",
+            "required": true,
+            "description": "Bearer xxxxxxx"
+          },
+          {
+            "in": "body",
+            "name": "refreshToken",
+            "required": true,
+            "example": "{refreshToken: Bearer ..............}"
+          }
+        ],
+        "responses": {}
+      }
+    },
+    "/users": {
+      "post": {
+        "tags": [
+          "user"
+        ],
+        "summary": "Register user",
+        "operationId": "addUser",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "User object that needs to be registered",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/RegisterUser"
+            }
+          }
+        ],
+        "responses": {}
+      },
+      "get": {
+        "tags": [
+          "user"
+        ],
+        "summary": "List of users by admin",
+        "operationId": "listUser",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "type": "string",
+            "required": true,
+            "description": "Bearer xxxxxxxxxx"
+          },
+          {
+            "in": "query",
+            "name": "role",
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "type": "integer"
+          },
+          {
+            "in": "query",
+            "name": "page",
+            "type": "integer",
+            "description": "The first page is number 1"
+          }
+        ],
+        "responses": {}
+      }
+    },
+    "/users/search": {
+      "get": {
+        "tags": [
+          "user"
+        ],
+        "summary": "Search user by name",
+        "operationId": "search",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "type": "string",
+            "required": true,
+            "description": "Bearer xxxxxxxxxx"
+          },
+          {
+            "in": "query",
+            "name": "search",
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "type": "integer"
+          },
+          {
+            "in": "query",
+            "name": "page",
+            "type": "integer",
+            "description": "The first page is number 1"
+          }
+        ],
+        "responses": {}
+      }
+    },
+    "/users/{userId}/changepassword": {
+      "post": {
+        "tags": [
+          "user"
+        ],
+        "summary": "Change password",
+        "operationId": "users/changepassword",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "type": "string",
+            "required": true,
+            "example": "Bearer xxxxxxx"
+          },
+          {
+            "in": "path",
+            "name": "userId",
+            "required": true,
+            "example": "23"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "New password",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "password": {
+                  "type": "string",
+                  "example": "12345678@Ab"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {}
+      }
+    },
+    "/users/forgotpassword": {
+      "post": {
+        "tags": [
+          "user"
+        ],
+        "summary": "Forgot password",
+        "operationId": "users/forgetpassword",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Email",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "email": {
+                  "type": "string",
+                  "example": "thanh.nguyen@terralogic.com"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {}
+      }
+    },
+    "/users/forgotaccount": {
+      "post": {
+        "tags": [
+          "user"
+        ],
+        "summary": "Forgot account",
+        "operationId": "forgetaccount",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "If birth_date is null, please send \"\". Success response is a array email list, let use email address with forgot password API.",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "first_name": {
+                  "type": "string",
+                  "example": "John"
+                },
+                "last_name": {
+                  "type": "string",
+                  "example": "Smith"
+                },
+                "birth_date": {
+                  "type": "string",
+                  "example": "1990-02-23"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {}
+      }
+    },
+    "/users/{userId}": {
+      "get": {
+        "tags": [
+          "user"
+        ],
+        "summary": "Get user by id",
+        "operationId": "user",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "type": "string",
+            "required": true,
+            "description": "Bearer xxxxxxxxxxxxx"
+          },
+          {
+            "in": "path",
+            "name": "userId",
+            "required": true,
+            "example": "23"
+          }
+        ],
+        "responses": {}
+      },
+      "patch": {
+        "tags": [
+          "user"
+        ],
+        "summary": "Update user info",
+        "operationId": "updateUser",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "type": "string",
+            "required": true,
+            "description": "Bearer xxxxxxx"
+          },
+          {
+            "in": "path",
+            "name": "userId",
+            "required": true,
+            "example": "23"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "User object that needs to be updated",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/UserInfo"
+            }
+          }
+        ],
+        "responses": {}
+      },
+      "delete": {
+        "tags": [
+          "user"
+        ],
+        "summary": "Delete user by id. Only Admin can do this.",
+        "operationId": "user",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "type": "string",
+            "required": true,
+            "description": "Bearer xxxxxxxxxxxxx"
+          },
+          {
+            "in": "path",
+            "name": "userId",
+            "required": true,
+            "example": "23"
+          }
+        ],
+        "responses": {}
+      }
+    },
+    "/users/avatar": {
+      "post": {
+        "tags": [
+          "user"
+        ],
+        "summary": "Upload avatar",
+        "operationId": "uploadAvatar",
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "type": "string",
+            "required": true,
+            "description": "Bearer xxxxxxx"
+          },
+          {
+            "name": "avatar",
+            "in": "formData",
+            "description": "file to upload",
+            "required": true,
+            "type": "file"
+          }
+        ],
+        "responses": {}
+      }
+    },
+    "/users/weights": {
+      "post": {
+        "tags": [
+          "user"
+        ],
+        "summary": "Insert weight of user in multiple days",
+        "operationId": "userWeights",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "type": "string",
+            "required": true,
+            "description": "Bearer xxxxxxxxxxxxx"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "UserWeight object",
+            "required": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Weight"
+              }
+            }
+          }
+        ],
+        "responses": {}
+      }
+    },
+    "/users/goals": {
+      "post": {
+        "tags": [
+          "goal"
+        ],
+        "summary": "User set goals",
+        "operationId": "userGoals",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "type": "string",
+            "required": true,
+            "description": "Bearer xxxxxxxxxxxxx"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Goals type should be list of [S, C, F, D, E, W, Z, M].",
+            "required": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Goal"
+              }
+            }
+          }
+        ],
+        "responses": {}
+      }
+    },
+    "/users/{userId}/goals/{fromDate}/{toDate}": {
+      "get": {
+        "tags": [
+          "goal"
+        ],
+        "summary": "List of goals by userId",
+        "operationId": "goals",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "type": "string",
+            "required": true,
+            "description": "Bearer xxxxxxxxxxxxx"
+          },
+          {
+            "in": "header",
+            "name": "time-zone",
+            "type": "string",
+            "required": true,
+            "description": "Asia/Saigon"
+          },
+          {
+            "in": "path",
+            "name": "userId",
+            "required": true,
+            "example": "23"
+          },
+          {
+            "in": "path",
+            "name": "fromDate",
+            "required": true,
+            "description": "YYYY-MM-DD"
+          },
+          {
+            "in": "path",
+            "name": "toDate",
+            "required": true,
+            "description": "YYYY-MM-DD"
+          }
+        ],
+        "responses": {}
+      }
+    },
+    "/fcm/register": {
+      "post": {
+        "tags": [
+          "fcm"
+        ],
+        "summary": "Phone register FCM Token",
+        "operationId": "fcm",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "type": "string",
+            "required": true,
+            "description": "Bearer xxxxxxxxxxxxx"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "FCM Token",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "token": {
+                  "type": "string",
+                  "example": "FCM Token"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {}
+      }
+    }
+  },
+  
+  "definitions": {
+    "RegisterUser": {
+      "type": "object",
+      "properties": {
+        "first_name": {
+          "type": "string",
+          "example": "Hai"
+        },
+        "last_name": {
+          "type": "string",
+          "example": "Tran"
+        },
+        "email": {
+          "type": "string",
+          "example": "hai.tran@gmail.com"
+        },
+        "password": {
+          "type": "string",
+          "example": "12345678@Ab"
+        }
+      },
+      "xml": {
+        "name": "RegisterUser"
+      }
+    },
+    "LoginUser": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string",
+          "example": "hai.tran@gmail.com"
+        },
+        "password": {
+          "type": "string",
+          "example": "12345678@Ab"
+        }
+      },
+      "xml": {
+        "name": "LoginUser"
+      }
+    },
+    "UserInfo": {
+      "type": "object",
+      "properties": {
+        "first_name": {
+          "type": "string",
+          "required": true,
+          "example": "David"
+        },
+        "last_name": {
+          "type": "string",
+          "required": true,
+          "example": "Larry"
+        },
+        "email": {
+          "type": "string",
+          "required": true,
+          "example": "dlarry@gmail.com"
+        },
+        "mobile_phone": {
+          "type": "string",
+          "required": true,
+          "example": "0903321842"
+        },
+        "mobile_phone_ext": {
+          "type": "string",
+          "required": true,
+          "example": "+84"
+        },
+        "address1": {
+          "type": "string",
+          "required": true,
+          "example": "Anna Building"
+        },
+        "address2": {
+          "type": "string",
+          "required": false,
+          "example": "QSCT, District 12"
+        },
+        "city": {
+          "type": "string",
+          "required": true,
+          "example": "HCM"
+        },
+        "zip": {
+          "type": "string",
+          "example": "700000"
+        },
+        "state": {
+          "type": "string",
+          "description": "State code",
+          "required": true,
+          "example": "HCM"
+        },
+        "country": {
+          "type": "string",
+          "description": "Country code",
+          "required": true,
+          "example": "VN"
+        },
+        "height": {
+          "type": "integer",
+          "required": true,
+          "example": 1.65
+        },
+        "height_unit": {
+          "type": "string",
+          "enum": [
+            "M",
+            "I"
+          ],
+          "required": true
+        },
+        "weight": {
+          "type": "integer",
+          "required": true,
+          "example": 76
+        },
+        "weight_unit": {
+          "type": "string",
+          "enum": [
+            "K",
+            "P"
+          ],
+          "required": true
+        },
+        "title": {
+          "type": "string",
+          "enum": [
+            "Ms",
+            "Mr"
+          ],
+          "required": true
+        },
+        "birth_date": {
+          "type": "string",
+          "description": "YYYY-MM-DD",
+          "required": true,
+          "example": "1990-02-23"
+        },
+        "shape": {
+          "type": "string",
+          "description": "'L/G/E/A",
+          "required": true,
+          "example": "G"
+        },
+        "activity_status": {
+          "type": "boolean",
+          "required": false,
+          "description": "1/0"
+        }
+      },
+      "xml": {
+        "name": "UserInfo"
+      }
+    },
+    "Goal": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "required": true,
+          "example": "M"
+        },
+        "value": {
+          "type": "float",
+          "required": true,
+          "example": 480
+        },
+        "unit": {
+          "type": "string",
+          "example": "H"
+        },
+        "time_frame": {
+          "type": "string",
+          "required": true,
+          "example": "W"
+        },
+        "created_at": {
+          "type": "string",
+          "required": false,
+          "example": "2019-07-19"
+        }
+      }
+    },
+    "Weight": {
+      "type": "object",
+      "properties": {
+        "weight": {
+          "type": "number",
+          "required": true,
+          "example": 70
+        },
+        "date": {
+          "type": "string",
+          "example": "2019-12-19"
+        }
+      }
+    }
+  }
+}

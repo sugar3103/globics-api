@@ -1,0 +1,10 @@
+{
+  "success": true,
+  "data": {
+    "login_id": "{{email}}",
+    "full_name": "{{name}}",
+    "role": "{{role}}",
+    "latest_login": "{{last_login_at}}",
+    "created_date": "{{created_at}}"
+  }
+}

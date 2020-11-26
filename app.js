@@ -1,29 +1,58 @@
-const express = require("express");
-const cors = require("cors");
-const initAPIs = require("./src/routes/api");
-const { corsMiddleWare } = require("./src/middleware/cors");
-const { restrict } = require("./src/middleware/restricts");
+require('dotenv').config();
+global.database = require('./database')
+const express = require('express');
+const path = require('path');
+const helmet = require('helmet');
+const cors = require('cors');
+const fileUpload = require("express-fileupload");
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocument = require('./swagger.json');
+
+const authRouter = require('./components/auth/authRoutesConfig');
+const usersRouter = require('./components/users/userRoutesConfig');
+const commonRouter = require('./components/common/commonRoutesConfig');
+const headerMiddleware = require('./components/common/middlewares/headerMiddleware');
+const {knexLogger} = require('./database');
 
 const app = express();
 
-app.disable("x-powered-by");
+const i18n = require('i18n');
+i18n.configure({
+    locales: ['en', 'fr'],
+    directory: path.join(__dirname, '/common/locales')
+})
+app.use(i18n.init);
 
-// restrict access only from ...
-app.use(function (req, res, next) {
-  restrict(req, res, next);
-});
+app.use(cors());
+app.use(fileUpload({
+    useTempFiles : true,
+    tempFileDir : '/tmp/'
+}));
 
-// set cors for browser
-app.use(corsMiddleWare());
+if (process.env.NODE_ENV === 'dev') {
+    swaggerDocument.host = 'localhost:' + process.env.port;
+    swaggerDocument.schemes = ['http'];
+}
 
-// get body from request
-app.use(express.json());
+let swaggerURL = '/api-docs';
+app.use(swaggerURL, swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+app.use(express.json({limit: '50mb'}));
+app.use(express.urlencoded({limit: '50mb', extended: true}));
+app.use(express.static(path.join(__dirname, 'public')));
 
-app.post("/", (req, res) => {
-  res.status(200).send("hello world");
-});
+//SQL logger
+//app.use(knexLogger);
 
-// Khởi tạo các routes cho ứng dụng
-initAPIs(app);
+// adding Helmet to enhance your API's security
+// app.use(helmet());
+// app.use('/api', headerMiddleware);
+app.use('/api', usersRouter);
+app.use('/api', authRouter);
 
-module.exports = app;
+app.listen(process.env.port, () => console.info(`Server listening on port ${process.env.port}!`));
+
+if (process.env.NODE_ENV === 'dev' || process.env.NODE_ENV === 'test') {
+    module.exports = app;
+} else {
+    module.exports = {app};
+}

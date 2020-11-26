@@ -1,0 +1,16 @@
+
+{
+    "applinks": {
+        "apps": [],
+        "details": [
+            {
+                "appID": "GZ4JL2838Y.com.montre.duoveo",
+                "paths": ["*"]
+            },
+            {
+                "appID": "BTQ3N244MK.com.montre.duoveo",
+                "paths": ["*"]
+            }
+        ]
+    }
+}

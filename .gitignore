@@ -1,2 +1,6 @@
-node_modules/
-config.js
+node_modules
+.idea/.gitignore
+.idea/ewrist-api.iml
+.idea/misc.xml
+.idea/modules.xml
+.idea/vcs.xml
