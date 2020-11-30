@@ -20,10 +20,7 @@ exports.setGoals = async (req, res) => {
 };
 
 exports.goals = async (req, res) => {
-    let userId = req.params.userId;
-    let fromDate = req.params.fromDate;
-    let toDate = req.params.toDate || fromDate;
-    let goals = await UserGoalModel.goalsByUserId(userId, fromDate, toDate);
-    
+    const {userId, fromDate, toDate, includeLatest} = req.params;
+    let goals = await UserGoalModel.goalsByUserId({userId, fromDate, toDate, includeLatest});
     return res.status(200).send(Utils.formatResponseArr(goals));
 };

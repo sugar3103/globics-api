@@ -1,12 +1,12 @@
-const {bookshelf} = database;
+const {bookshelf, knex} = database;
 const Utils = require("../../../utils/allUtils");
 const constants = require("../../../common/utils/constants");
 const moment = require('moment');
 
+const tableName = 'user_goal';
 exports.UserGoal = bookshelf.Model.extend({
-    tableName: 'user_goal',
+    tableName,
     hasTimestamps: true,
-
 })
 
 const userGoalByType = (userGoals, type) => {
@@ -34,8 +34,8 @@ exports.update = async (userId, goals, date) => {
 
     try {
         // Create user_goals
-        if (userGoals.length == 0) {
-            result = await UserGoals.forge(goals).insert();
+        if (userGoals.length === 0) {
+            result = await UserGoals.forge(goals).invokeThen('save');
         } else {
             let newGoals = [];
             for (let goal of goals) {
@@ -51,13 +51,12 @@ exports.update = async (userId, goals, date) => {
             }
             result = await userGoals.invokeMap('save');
             if (newGoals.length > 0) {
-                result = await UserGoals.forge(newGoals).insert();
+                result = await UserGoals.forge(newGoals).invokeThen('save');
             }
         }
 
         return result;
-    }
-    catch (err) {
+    } catch (err) {
         console.error(err);
         return null;
     }
@@ -75,8 +74,7 @@ exports.insert = async (userId, goals, date) => {
         result = await UserGoals.forge(goals).insert();
 
         return result;
-    }
-    catch (err) {
+    } catch (err) {
         console.error(err);
         return null;
     }
@@ -87,55 +85,70 @@ exports.goalsByDate = async (userId, date) => {
     return userGoals;
 }
 
-exports.goalsByUserId = async (userId, fromDate, toDate=fromDate) => {
+exports.goalsLatestByUserId = async (userId, date) => {
+    let query = `WITH ranked_messages AS 
+    (SELECT m.*, ROW_NUMBER() OVER (PARTITION BY type) AS rn FROM ${tableName} AS m
+        WHERE user_id = ${userId} AND DATE(created_at) <= DATE('${date}')) 
+        SELECT * FROM ranked_messages WHERE rn = 1;`
+    return knex.raw(query);
+}
+
+exports.goalsByUserId = async ({userId, fromDate, toDate = fromDate, includeLatest = true}) => {
     let query = this.UserGoal
-    .where({'user_id': userId})
-    .andWhere(bookshelf.knex.raw("DATE(created_at)"), '>=', fromDate)
-    .andWhere(bookshelf.knex.raw("DATE(created_at)"), '<=', toDate);
+        .where({'user_id': userId})
+        .andWhere(bookshelf.knex.raw("DATE(created_at)"), '>=', fromDate)
+        .andWhere(bookshelf.knex.raw("DATE(created_at)"), '<=', toDate);
 
     let userGoals = await query.orderBy('-id').fetchAll();
+
+    //Will work......
+    if (includeLatest) {
+        let latestGoals = this.goalsLatestByUserId(userId, toDate);
+
+        return latestGoals;
+    }
 
     if (userGoals.length > 0) {
         return userGoals;
     }
 
-    // Get latest previous Goals if the current not found.
-    let retryQuery = this.UserGoal
-        .where({ 'user_id': userId })
-        .andWhere(bookshelf.knex.raw("DATE(created_at)"), '<=', toDate)
-        .orderBy('-id')
-        .limit(constants.GOALS.length);
-    userGoals = await retryQuery.fetchAll();
+    // // Get latest previous Goals if the current not found.
+    // let retryQuery = this.UserGoal
+    //     .where({ 'user_id': userId })
+    //     .andWhere(bookshelf.knex.raw("DATE(created_at)"), '<=', toDate)
+    //     .orderBy('-id')
+    //     .limit(constants.GOALS.length);
+    // userGoals = await retryQuery.fetchAll();
+    //
+    // //hotfix for the case missing Meditation goal
+    // if (userGoals.length > 0) {
+    //     const lastItem = userGoals.pop();
+    //     if(!userGoals.some(item => item.get('type') === lastItem.get('type'))){
+    //         userGoals.push(lastItem);
+    //     }
+    // }
 
-    //hotfix for the case missing Meditation goal
-    if (userGoals.length > 0) {
-        const lastItem = userGoals.pop();
-        if(!userGoals.some(item => item.get('type') === lastItem.get('type'))){
-            userGoals.push(lastItem);
-        }
-    }
-    
     return userGoals;
 }
 
 // This function returns all goals (from 2019-01-01) of user.
-exports.goalsByTypeAndUserId = async (userId, type, fromDate, toDate=fromDate) => {
+exports.goalsByTypeAndUserId = async (userId, type, fromDate, toDate = fromDate) => {
     let op = null;
-    if(type==='Z'){
-       op = { columns: [bookshelf.knex.raw(`ROUND(value/60, 1) as value`), 'id', 'type', 'user_id', 'unit', 'time_frame', 'created_at'] }
+    if (type === 'Z') {
+        op = {columns: [bookshelf.knex.raw(`ROUND(value/60, 1) as value`), 'id', 'type', 'user_id', 'unit', 'time_frame', 'created_at']}
     }
     let query = this.UserGoal.where({user_id: userId})
-    .andWhere({type: type})
-    .andWhere(bookshelf.knex.raw("DATE(created_at)"), '>=', '2019-01-01')
-    .andWhere(bookshelf.knex.raw("DATE(created_at)"), '<=', toDate)
-    .orderBy('-id'); //don't change this orderBy
+        .andWhere({type: type})
+        .andWhere(bookshelf.knex.raw("DATE(created_at)"), '>=', '2019-01-01')
+        .andWhere(bookshelf.knex.raw("DATE(created_at)"), '<=', toDate)
+        .orderBy('-id'); //don't change this orderBy
 
     let userGoals = await query.fetchAll(op);
 
     // Process goals, fill out the dates which don't goal.
     // Make sure the query above orderBy('-id').
     let dates = Utils.datesBetweenDates(fromDate, toDate);
-    
+
     let result = [];
     for (let date of dates) {
         let goal = userGoals.find(goal => Utils.dateString(goal.get('created_at')) <= date);
@@ -166,12 +179,12 @@ exports.goalPerDay = (goals, fromDate, toDate) => {
         }
     }
 
-    return value/count;
+    return value / count;
 }
 
 // goals params MUST be from exports.goalsByTypeAndUserId
 exports.goalByMonth = (goals, month, year) => {
-    
+
     let result = 0;
     for (let goal of goals) {
         let y = goal.date.split('-')[0] - 0;
@@ -180,13 +193,13 @@ exports.goalByMonth = (goals, month, year) => {
         if (y == year && m == month) {
             let value = goal.value;
             if (goal.time_frame == 'W') {
-                value = value/7.0;
+                value = value / 7.0;
             }
 
             result += value;
         }
     }
-    
+
     return result;
 }
 
@@ -208,5 +221,5 @@ exports.goalValueByWeek = (goals, week, year) => {
         }
     }
 
-    return Utils.round(value/count, 0);
+    return Utils.round(value / count, 0);
 }

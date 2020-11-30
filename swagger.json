@@ -624,6 +624,12 @@
             "name": "toDate",
             "required": true,
             "description": "YYYY-MM-DD"
+          },
+          {
+            "in": "path",
+            "name": "includeLatest",
+            "required": false,
+            "description": "Include latest goals: 1|0"
           }
         ],
         "responses": {}

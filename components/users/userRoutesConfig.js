@@ -9,6 +9,7 @@ const UsersController = require('./controllers/userController');
 const UserInfoController = require('./controllers/userInfoController');
 const PermissionMiddleware = require('../../common/middlewares/permissionMiddleware');
 const AuthValidationMiddleware = require('../../common/middlewares/authValidationMiddleware');
+const GoalController = require('./controllers/goalController');
 
 const ADMIN = constants.role.ADMIN;
 const USER = constants.role.USER;
@@ -82,6 +83,19 @@ router.post('/users/:userId/changepassword', [
     CommonMiddleware.handleInvalidBody,
     PermissionMiddleware.onlySameUserOrAdminCanDoThisAction,
     UsersController.changePassword
+]);
+
+router.post('/users/goals', [
+    AuthValidationMiddleware.validJWTNeeded,
+    UserValidatorMiddleware.goals,
+    CommonMiddleware.handleInvalidBody,
+    GoalController.setGoals
+]);
+
+router.get('/users/:userId/goals/:fromDate/:toDate', [
+    AuthValidationMiddleware.validJWTNeeded,
+    PermissionMiddleware.onlySameUserOrAdminCanDoThisAction,
+    GoalController.goals
 ]);
 
 router.delete('/users/:userId', [

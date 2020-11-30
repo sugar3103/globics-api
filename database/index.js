@@ -23,4 +23,4 @@ const knex = require('knex')({
 const knexLogger = require('knex-logger')(knex);
 const bookshelf = require('bookshelf')(knex);
 bookshelf.plugin(require('bookshelf-eloquent'));
-module.exports = {bookshelf, knexLogger};
+module.exports = {bookshelf, knexLogger, knex};

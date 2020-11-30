@@ -77,9 +77,6 @@ exports.goals = [
     body('*.unit').isIn([null, 'M', 'K', 'P', 'H']).withMessage('Unit is invalid'),
     body('*.time_frame').isIn(['D', 'W', 'T']).withMessage('Time frame is invalid'),
     body().custom(body => {
-        if (body && body.length < constants.GOALS.length - 1) {
-            throw new Error(`Goals should be list of [${constants.GOALS.join(', ')}]`);
-        }
         constants.GOALS.forEach(type => {
             if (body.filter(i => i.type === type).length > 1) {
                 throw new Error(`Goals type ${type} duplicate.`);
