@@ -1,5 +1,6 @@
 {
 	"E-mail doesn't exist.": "E-mail doesn't exist.",
 	"An unexpected error occured during saving user's goals.": "An unexpected error occured during saving user's goals.",
-	"Update succeeded!": "Update succeeded!"
+	"Update succeeded!": "Update succeeded!",
+	"We have sent you an email to reset your password.": "We have sent you an email to reset your password."
 }

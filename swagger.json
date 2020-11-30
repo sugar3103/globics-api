@@ -325,7 +325,7 @@
               "properties": {
                 "email": {
                   "type": "string",
-                  "example": "thanh.nguyen@terralogic.com"
+                  "example": "hai.tran@terralogic.com"
                 }
               }
             }

@@ -62,7 +62,7 @@ describe('/signup', function(){
           .send({
             first_name: 'api test',
             last_name: 'api test',
-            email: `thanh.nguyen+${utils.randomInt(10000, 99999999)}@ncubelabs.com`,
+            email: ``,
             password: '12345678@Ab'
           })
           .end((err, res) => {
