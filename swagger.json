@@ -731,30 +731,20 @@
           "required": true,
           "example": "Larry"
         },
-        "email": {
-          "type": "string",
-          "required": true,
-          "example": "dlarry@gmail.com"
-        },
-        "mobile_phone": {
+        "phone": {
           "type": "string",
           "required": true,
           "example": "0903321842"
         },
-        "mobile_phone_ext": {
+        "phone_ext": {
           "type": "string",
           "required": true,
           "example": "+84"
         },
-        "address1": {
+        "address": {
           "type": "string",
           "required": true,
-          "example": "Anna Building"
-        },
-        "address2": {
-          "type": "string",
-          "required": false,
-          "example": "QSCT, District 12"
+          "example": "Mitalab building, Cong Hoa"
         },
         "city": {
           "type": "string",
@@ -780,7 +770,7 @@
         "height": {
           "type": "integer",
           "required": true,
-          "example": 1.65
+          "example": 165
         },
         "height_unit": {
           "type": "string",
@@ -793,7 +783,7 @@
         "weight": {
           "type": "integer",
           "required": true,
-          "example": 76
+          "example": 76000
         },
         "weight_unit": {
           "type": "string",
@@ -803,11 +793,12 @@
           ],
           "required": true
         },
-        "title": {
+        "gender": {
           "type": "string",
           "enum": [
-            "Ms",
-            "Mr"
+            "0",
+            "1",
+            "2"
           ],
           "required": true
         },
@@ -816,17 +807,6 @@
           "description": "YYYY-MM-DD",
           "required": true,
           "example": "1990-02-23"
-        },
-        "shape": {
-          "type": "string",
-          "description": "'L/G/E/A",
-          "required": true,
-          "example": "G"
-        },
-        "activity_status": {
-          "type": "boolean",
-          "required": false,
-          "description": "1/0"
         }
       },
       "xml": {

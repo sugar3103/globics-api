@@ -10,7 +10,7 @@ exports.UserInfo = bookshelf.Model.extend({
 })
 
 exports.update = async (userId, userData) => {
-    let userInfo = await this.UserInfo.where({'user_id': userId, 'deleted_at': null}).fetch();
+    let userInfo = await this.UserInfo.where({'user_id': userId}).fetch();
 
     if (!userInfo) {
         userInfo = this.UserInfo.forge({

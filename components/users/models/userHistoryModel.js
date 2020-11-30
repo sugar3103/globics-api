@@ -14,7 +14,7 @@ exports.updateWeight = async (userId, value, date=new Date()) => {
     });
     query.andWhere(bookshelf.knex.raw("DATE(created_at)"), Utils.dateString(date));
 
-    let weight = await query.fetch();
+    let weight = await query.fetch({require: false});
 
     try {
         // Insert

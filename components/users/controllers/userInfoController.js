@@ -10,20 +10,7 @@ exports.patchById = async (req, res) => {
   let user;
   let userData = {};
   if (req.body.email) {
-    let email = req.body.email;
     delete req.body.email;
-
-    if (email !== req.jwt.email) {
-      let existedUser = await UserModel.findByEmail(email);
-      if (existedUser) {
-        return res.status(200).send({errors: [Utils.buildErrorMsg(res.__("E-mail already in use."))]});
-      }
-
-      // Need to verify email in term of user changing his email.
-      setImmediate(() => {
-        Mailer.mailToVerifyEmail(req, userId, email);
-      });
-    }
   }
   if (req.body.first_name) userData.first_name = req.body.first_name;
   if (req.body.last_name) userData.last_name = req.body.last_name;

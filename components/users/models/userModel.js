@@ -12,8 +12,7 @@ exports.User = bookshelf.Model.extend({
 })
 
 exports.findById = async (userId) => {
-    let user = await this.User.where({'id': userId, 'deleted_at': null}).fetch();
-    return user;
+    return await this.User.where({'id': userId, 'deleted_at': null}).fetch({require: false});
 }
 
 exports.findByEmail = async (email) => {
@@ -21,8 +20,11 @@ exports.findByEmail = async (email) => {
 };
 
 exports.findBySocialID = async (id) => {
-    let user = await this.User.where({'social_id': id, 'deleted_at': null}).fetch();
-    return user;
+    try {
+        return await this.User.where({'social_id': id, 'deleted_at': null}).fetch();
+    }catch (e) {
+        return null;
+    }
 };
 
 exports.list = async (role, pageSize=1000000, page=1) => {
