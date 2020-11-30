@@ -84,13 +84,9 @@ exports.forgotPassword = async (req, res) => {
         return res.status(200).send({errors: [Utils.buildErrorMsg(res.__("E-mail doesn\'t exist."))]});
     }
 
-    if (!user.get('activated_at')) {
-        return res.status(200).send({errors: [Utils.buildErrorMsg(res.__("Your account has not been activated. Please check your email then activate your account."))]});
-    }
-
     setImmediate(() => {
         let newPassword = shortid.generate();
-        Mailer.sendResetPasswordEmail(req, user.get('id'), user.get('email'), newPassword);
+        Mailer.sendResetPasswordEmail(req, user, newPassword);
     })
 
     return res.status(200).send({msg: res.__("We have sent you an email to reset your password.")});
