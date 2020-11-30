@@ -375,6 +375,39 @@
         "responses": {}
       }
     },
+    "/users/resentActivationEmail": {
+      "post": {
+        "tags": [
+          "user"
+        ],
+        "summary": "resent activation email",
+        "operationId": "resentActivationEmail",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "email",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "email": {
+                  "type": "string",
+                  "example": "mail@gmail.com"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {}
+      }
+    },
     "/users/{userId}": {
       "get": {
         "tags": [

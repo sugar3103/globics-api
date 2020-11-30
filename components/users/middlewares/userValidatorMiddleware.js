@@ -26,6 +26,10 @@ exports.signup = [
     userValidator.email_already_in_use
 ]
 
+exports.resentActivationEmail = [
+    userValidator.email,
+]
+
 exports.auth = [
     userValidator.email,
     body('password').not().isEmpty().withMessage('Password is invalid'),

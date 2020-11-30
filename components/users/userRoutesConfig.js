@@ -21,6 +21,12 @@ router.post('/users', [
     UsersController.create
 ]);
 
+router.post('/users/resentActivationEmail', [
+    UserValidatorMiddleware.resentActivationEmail,
+    CommonMiddleware.handleInvalidBody,
+    UsersController.resentActivationEmail
+]);
+
 router.get('/users/activate/:userId/:code', [
     UsersController.activate
 ]);

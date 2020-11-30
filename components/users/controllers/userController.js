@@ -23,6 +23,22 @@ exports.create = async (req, res) => {
 };
 
 /**
+ * Resent Activation Email
+ */
+
+exports.resentActivationEmail = async (req, res) => {
+    let {email} = req.body;
+    let user = await UserModel.findByEmail(email);
+    if (!user) {
+        return res.status(200).send({errors: [Utils.buildErrorMsg(res.__("User not found!"))]});
+    }
+    setImmediate(()=>{
+        Mailer.sendActivationEmail(req, user);
+    })
+    return res.status(201).send({msg: res.__('Sent succeeded!')});
+};
+
+/**
  * Active account after registered
  */
 exports.activate = async (req, res) => {
