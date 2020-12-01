@@ -6,5 +6,6 @@
 	"Your account has not been activated. Please check your email then activate your account.": "Your account has not been activated. Please check your email then activate your account.",
 	"An unexpected error occured during updating user info.": "An unexpected error occured during updating user info.",
 	"User not found!": "User not found!",
-	"Sent succeeded!": "Sent succeeded!"
+	"Sent succeeded!": "Sent succeeded!",
+	"Logged successfully!": "Logged successfully!"
 }

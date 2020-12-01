@@ -29,7 +29,7 @@ exports.doLogin = async (req, res) => {
                 userInfo: userInfo
             }
         }
-        res.status(201).send(Utils.buildDataResponse({data: result, msg: 'Logged successfully!'}));
+        res.status(201).send(Utils.buildDataResponse({data: result, msg: res.__('Logged successfully!')}));
     } catch (err) {
         res.status(200).send(Utils.buildErrorResponse(err.message, constants.ERROR_CODE.UNKNOWN));
     }

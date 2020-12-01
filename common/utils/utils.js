@@ -40,7 +40,7 @@ exports.buildErrorResponse = (msg, errorCode = constants.ERROR_CODE.UNKNOWN) => 
     }
 }
 
-exports.buildDataResponse = ({data = {}, msg ='Success!', options = {}, code = constants.ERROR_CODE.SUCCESS}) => {
+exports.buildDataResponse = ({data = {}, msg ='Success!', options = {}, code = constants.SUCCESS_CODE.SUCCESS}) => {
     return {
         code,
         msg,
