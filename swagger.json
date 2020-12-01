@@ -3,7 +3,7 @@
   "info": {
     "description": "Globics default service.",
     "version": "1.0.0",
-    "title": "Globics API"
+    "title": "Globics API SYSTEM SERVICES"
   },
   "host": "",
   "basePath": "/api",

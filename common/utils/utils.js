@@ -1,5 +1,6 @@
 const crypto = require('crypto');
 const url = require('url');
+const constants = require('./constants');
 
 exports.hash = (password, salt=null, digest=null) => {
     salt = salt || crypto.randomBytes(16).toString('base64');
@@ -29,6 +30,23 @@ exports.buildErrorMsg = (msg, errorCode=null) => {
     err.code = errorCode;
   }
   return err;
+}
+
+exports.buildErrorResponse = (msg, errorCode = constants.ERROR_CODE.UNKNOWN) => {
+    let errors = [this.buildErrorMsg(msg)];
+    return {
+        code: errorCode,
+        errors
+    }
+}
+
+exports.buildDataResponse = ({data = {}, msg ='Success!', options = {}, code = constants.ERROR_CODE.SUCCESS}) => {
+    return {
+        code,
+        msg,
+        data,
+        ...options
+    }
 }
 
 exports.buildResponseObj = (bookshelfObj, keys) => {

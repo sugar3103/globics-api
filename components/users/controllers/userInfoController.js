@@ -4,6 +4,7 @@ const UserInfoModel = require('../models/userInfoModel');
 const UserHistoryModel = require('../models/userHistoryModel');
 const Utils = require('../../../utils/allUtils');
 const Mailer = require('../../../utils/mailer');
+const constants = require('../../../common/utils/constants');
 
 exports.patchById = async (req, res) => {
   let userId = req.params.userId;
@@ -20,7 +21,7 @@ exports.patchById = async (req, res) => {
   if (!Utils.isEmptyOrNull(userData)) {
     user = await UserModel.update(userId, userData);
     if (!user) {
-      return res.status(200).send({errors: [Utils.buildErrorMsg(res.__("An unexpected error occured during updating user."))]});
+      return res.status(200).send(Utils.buildErrorResponse(res.__("An unexpected error occurred during updating user."), constants.ERROR_CODE.SAVE_ERROR));
     }
     Utils.responseUser(user);
 
@@ -34,15 +35,15 @@ exports.patchById = async (req, res) => {
   if (!Utils.isEmptyOrNull(req.body)) {
     let userInfo = await UserInfoModel.update(userId, req.body);
     if (!userInfo) {
-      return res.status(200).send({errors: [Utils.buildErrorMsg(res.__("An unexpected error occured during updating user info."))]});
+      return res.status(200).send(Utils.buildErrorResponse(res.__("An unexpected error occurred during updating user info."), constants.ERROR_CODE.SAVE_ERROR));
     }
-    return res.status(200).send({user, userInfo});
+    return res.status(200).send(Utils.buildDataResponse({data: {user, userInfo}}));
   }
-  return res.status(200).send({user});
+  return res.status(200).send(Utils.buildDataResponse({data: {user}}));
 };
 
 exports.uploadAvatar = async (req, res) => {
-  return res.status(200).send({ url: 'not working now!' });
+  return res.status(200).send(Utils.buildDataResponse({data: { url: 'not working now!' }}));
 };
 
 /**
@@ -55,8 +56,8 @@ exports.insertWeights = async (req, res) => {
   for (let item of weights) {
     let result = await UserHistoryModel.updateWeight(userId, item.weight, item.date);
     if (!result) {
-      return res.status(200).send({ errors: [Utils.buildErrorMsg(res.__("An unexpected error occurred during synchronizing weight item with cloud."))] });
+      return res.status(200).send(Utils.buildErrorResponse(res.__("An unexpected error occurred during synchronizing weight item with cloud."), constants.ERROR_CODE.SAVE_ERROR));
     }
   }
-  res.status(200).send({msg: res.__("Update succeeded!")});
+  res.status(200).send(Utils.buildDataResponse({msg: res.__("Update succeeded!")}));
 };

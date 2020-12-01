@@ -8,7 +8,7 @@ exports.verifyRefreshBodyField = (req, res, next) => {
     if (req.body && req.body.refreshToken) {
         return next();
     } else {
-        return res.status(200).send({errors: [Utils.buildErrorMsg(res.__('Need to pass refreshToken field.'))]});
+        return res.status(200).send(Utils.buildErrorResponse(res.__('Need to pass refreshToken field.'), constants.ERROR_CODE.INVALID));
     }
 };
 
@@ -17,7 +17,7 @@ exports.validRefreshNeeded = (req, res, next) => {
     let refreshToken = b.toString();
     let hash = Utils.hash(req.jwt.userId + jwtSecret, req.jwt.refreshKey);
     if (hash != refreshToken) {
-        return res.status(200).send({errors: [Utils.buildErrorMsg(res.__('Invalid refresh token.'))]});
+        return res.status(200).send(Utils.buildErrorResponse(res.__('Invalid refresh token.'), constants.ERROR_CODE.INVALID));
     }
 
     req.body = req.jwt;
@@ -27,13 +27,13 @@ exports.validRefreshNeeded = (req, res, next) => {
 
 exports.validJWTNeeded = (req, res, next) => {
     if (!req.headers['authorization']) {
-        return res.status(200).send({errors: [Utils.buildErrorMsg(res.__('Invalid access token.'))]});
+        return res.status(200).send(Utils.buildErrorResponse(res.__('Invalid access token.'), constants.ERROR_CODE.INVALID));
     }
 
     try {
         let authorization = req.headers['authorization'].split(' ');
         if (authorization[0] !== 'Bearer') {
-            return res.status(200).send({errors: [Utils.buildErrorMsg(res.__('Invalid access token.'))]});
+            return res.status(200).send(Utils.buildErrorResponse(res.__('Invalid access token.'), constants.ERROR_CODE.INVALID));
         }
         req.jwt = jwt.verify(authorization[1], jwtSecret);
         // Log all requests except file upload
@@ -53,6 +53,6 @@ exports.validJWTNeeded = (req, res, next) => {
 
     } catch (err) {
         console.error(err);
-        return res.status(200).send({errors: [Utils.buildErrorMsg(err.message)]});
+        return res.status(200).send(Utils.buildErrorResponse(err.message, constants.ERROR_CODE.UNKNOWN));
     }
 };

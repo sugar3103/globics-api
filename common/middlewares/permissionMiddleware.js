@@ -8,7 +8,7 @@ exports.minimumPermissionLevelRequired = (required_role) => {
         if (user_role >= required_role) {
             return next();
         } else {
-            return res.status(200).send({errors: [Utils.buildErrorMsg(res.__('Permission denied.'))]});
+            return res.status(200).send(Utils.buildErrorResponse(res.__('Permission denied.', constants.ERROR_CODE.PERMISSION_DENIED)));
         }
     };
 };
@@ -24,7 +24,7 @@ exports.onlySameUserOrAdminCanDoThisAction = (req, res, next) => {
         if (user_role & constants.role.ADMIN) {
             return next();
         } else {
-            return res.status(200).send({errors: [Utils.buildErrorMsg(res.__('Permission denied.'))]});
+            return res.status(200).send(Utils.buildErrorResponse(res.__('Permission denied.', constants.ERROR_CODE.PERMISSION_DENIED)));
         }
     }
 
@@ -36,7 +36,7 @@ exports.sameUserCantDoThisAction = (req, res, next) => {
     if (req.params.userId != userId) {
         return next();
     } else {
-        return res.status(200).send({errors: [Utils.buildErrorMsg(res.__('Permission denied.'))]});
+        return res.status(200).send(Utils.buildErrorResponse(res.__('Permission denied.', constants.ERROR_CODE.PERMISSION_DENIED)));
     }
 
 };

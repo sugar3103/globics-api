@@ -16,7 +16,7 @@ exports.doLogin = async (req, res) => {
             expiresIn : constants.accessTokenExprireIn
         });
         
-        let b = new Buffer(hash);
+        let b = Buffer.from(hash);
         let refreshToken = b.toString('base64');
 
         let user = await UserModel.update(req.body.userId, {last_login_at: new Date()});
@@ -29,24 +29,24 @@ exports.doLogin = async (req, res) => {
                 userInfo: userInfo
             }
         }
-        res.status(201).send(result);
+        res.status(201).send(Utils.buildDataResponse({data: result, msg: 'Logged successfully!'}));
     } catch (err) {
-        res.status(200).send({errors: [Utils.buildErrorMsg(err.message)]});
+        res.status(200).send(Utils.buildErrorResponse(err.message, constants.ERROR_CODE.UNKNOWN));
     }
 };
 
 exports.doLogout = async (req, res) => {
     UserModel.update(req.jwt.userId, {fcm_token: null});
-    return res.status(200).send({msg: res.__("Logged out successfully.")});
+    return res.status(200).send(Utils.buildDataResponse({msg: res.__("Logged out successfully.")}));
 };
 
 exports.refreshToken = (req, res) => {
     try {
         req.body = req.jwt;
-        req.body.refreshKey = crypto.randomBytes(16).toString('base64');;
+        req.body.refreshKey = crypto.randomBytes(16).toString('base64');
         let accessToken = jwt.sign(req.body, jwtSecret);
-        res.status(201).send({accessToken: accessToken});
+        res.status(201).send(Utils.buildDataResponse({data: {accessToken: accessToken}}));
     } catch (err) {
-        res.status(200).send({errors: [Utils.buildErrorMsg(err.message)]});
+        res.status(200).send(Utils.buildErrorResponse(err.message, constants.ERROR_CODE.UNKNOWN));
     }
 };

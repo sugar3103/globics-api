@@ -32,7 +32,7 @@ exports.processSocialLoginToken = async (req, res, next) => {
             });
         socialData = await result.json();
         if (!socialData || socialData.error) {
-            return res.status(200).send({errors: [Utils.buildErrorMsg(res.__("Invalid token."))]});
+            return res.status(200).send(Utils.buildErrorResponse(res.__("Invalid token."), constants.ERROR_CODE.INVALID));
         }
         data = {...data, ...socialData};
     }
@@ -60,7 +60,7 @@ exports.processSocialLoginToken = async (req, res, next) => {
 
     // Check activated for security reason.
     if (!user.get('activated_at')) {
-        return res.status(200).send({errors: [Utils.buildErrorMsg(res.__("Your account has not been activated. Please check your email then activate your account."))]});
+        return res.status(200).send(Utils.buildErrorResponse(res.__("Your account has not been activated. Please check your email then activate your account."), constants.ERROR_CODE.ACCOUNT_NOT_ACTIVE));
     }
 
     req.body = {
@@ -78,7 +78,7 @@ exports.processSocialLoginToken = async (req, res, next) => {
 exports.isPasswordAndUserMatch = async (req, res, next) => {
     let user = await UserModel.findByEmail(req.body.email);
     if(!user){
-        res.status(200).send({errors: [Utils.buildErrorMsg(res.__("E-mail doesn\'t exist."))]});
+        res.status(200).send(Utils.buildErrorResponse(res.__("E-mail doesn\'t exist."), constants.ERROR_CODE.EMAIL_NO_EXISTS));
         return;
     }
 
@@ -87,11 +87,11 @@ exports.isPasswordAndUserMatch = async (req, res, next) => {
     let hash = Utils.hash(req.body.password, salt);
 
     if (hash !== passwordFields[1]) {
-        return res.status(200).send({errors: [Utils.buildErrorMsg(res.__("Invalid email or password."))]});
+        return res.status(200).send(Utils.buildErrorResponse(res.__("Invalid email or password."), constants.ERROR_CODE.INVALID));
     }
 
     if (!user.get('activated_at')) {
-        return res.status(200).send({errors: [Utils.buildErrorMsg(res.__("Your account has not been activated. Please check your email then activate your account."))]});
+        return res.status(200).send(Utils.buildErrorResponse(res.__("Your account has not been activated. Please check your email then activate your account."), constants.ERROR_CODE.ACCOUNT_NOT_ACTIVE));
     }
 
 
