@@ -1,82 +1,82 @@
-const nodemailer = require("nodemailer");
-const Utils = require('./allUtils');
-const jwtSecret = process.env.jwt_secret;
-const url = require('url');
+const nodemailer = require('nodemailer')
+const Utils = require('./allUtils')
+const jwtSecret = process.env.jwt_secret
+const url = require('url')
 
-const {mailer_user, mailer_password, mailer_name} = process.env;
+const { mailer_user, mailer_password, mailer_name } = process.env
 const sendEmail = async (mailOptions) => {
   // create reusable transporter object using the default SMTP transport
-  let transporter = nodemailer.createTransport({
+  const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
       user: mailer_user,
       pass: mailer_password
     }
-  });
+  })
   try {
-    let info = await transporter.sendMail(mailOptions);
-    console.info("Email sent: %s", info.messageId);
-    return true;
-  }catch (e) {
-    console.error(e);
-    return false;
+    const info = await transporter.sendMail(mailOptions)
+    console.info('Email sent: %s', info.messageId)
+    return true
+  } catch (e) {
+    console.error(e)
+    return false
   }
-};
+}
 
 exports.sendActivationEmail = async (req, user) => {
-  let activateCode = Utils.generatePassword(user.get('id') + jwtSecret, null, 'hex');
-  let activateURL = `${Utils.fullUrl(req)}/activate/${user.get('id')}/${activateCode}`;
+  const activateCode = Utils.generatePassword(user.get('id') + jwtSecret, null, 'hex')
+  const activateURL = `${Utils.fullUrl(req)}/activate/${user.get('id')}/${activateCode}`
 
-  console.info("Activation Link: " + activateURL);
+  console.info('Activation Link: ' + activateURL)
 
-    // send mail with defined transport object
-  let mailOptions = {
-      from: mailer_name, // sender address
-      to: user.get('email'), // list of receivers
-      subject: "Globics Customer Account Activation", // Subject line
-      html: `<h3>Thanks for signing up for Globics!</h3> </br>Please activate your account at <a href="${activateURL}">Activate Your Account</a>`
-  };
-
-  for (let i = 0; i < 3; i++) {
-    if(await sendEmail(mailOptions)){
-      break;
-    }else {
-      console.error(`Error (${i}): send email to ${mailOptions.to}`);
-      if(i<2) await Utils.timeout(60000);
-    }
-  }
-};
-
-exports.sendResetPasswordEmail = (req, user, newPassword) => {
-  let code = Utils.generatePassword(user.get('id') + jwtSecret, null, 'hex');
-  let resetPasswordURL = Utils.fullUrl(req).replace('/forgotpassword', '') + '/resetpassword/' + user.get('id') + '/' + newPassword + '/' + code;
-
-  console.info("Reset Password Link: " + resetPasswordURL);
-
-  let mailOptions = {
+  // send mail with defined transport object
+  const mailOptions = {
     from: mailer_name, // sender address
     to: user.get('email'), // list of receivers
-    subject: "Globics Reset Your Password", // Subject line
-    html: `You are receiving this email because we received a password request for your account. </br>Your password will be reset to <b>${newPassword}</b> once clicking on <a href="${resetPasswordURL}">Reset Your Password</a>`
-  };
+    subject: 'Globics Customer Account Activation', // Subject line
+    html: `<h3>Thanks for signing up for Globics!</h3> </br>Please activate your account at <a href="${activateURL}">Activate Your Account</a>`
+  }
 
-  sendEmail(mailOptions);
+  for (let i = 0; i < 3; i++) {
+    if (await sendEmail(mailOptions)) {
+      break
+    } else {
+      console.error(`Error (${i}): send email to ${mailOptions.to}`)
+      if (i < 2) await Utils.timeout(60000)
+    }
+  }
+}
+
+exports.sendResetPasswordEmail = (req, user, newPassword) => {
+  const code = Utils.generatePassword(user.get('id') + jwtSecret, null, 'hex')
+  const resetPasswordURL = Utils.fullUrl(req).replace('/forgotpassword', '') + '/resetpassword/' + user.get('id') + '/' + newPassword + '/' + code
+
+  console.info('Reset Password Link: ' + resetPasswordURL)
+
+  const mailOptions = {
+    from: mailer_name, // sender address
+    to: user.get('email'), // list of receivers
+    subject: 'Globics Reset Your Password', // Subject line
+    html: `You are receiving this email because we received a password request for your account. </br>Your password will be reset to <b>${newPassword}</b> once clicking on <a href="${resetPasswordURL}">Reset Your Password</a>`
+  }
+
+  sendEmail(mailOptions)
 }
 
 exports.mailToVerifyEmail = async (req, userId, receiverEmail) => {
-  let code = Utils.generatePassword(userId + receiverEmail + jwtSecret, null, 'hex');
-  let path = `/api/users/verify/${userId}/${receiverEmail}/${code}`;
-  let verifyUrl = url.format({
+  const code = Utils.generatePassword(userId + receiverEmail + jwtSecret, null, 'hex')
+  const path = `/api/users/verify/${userId}/${receiverEmail}/${code}`
+  const verifyUrl = url.format({
     protocol: 'https',
     host: req.get('host'),
     pathname: path
-  });
+  })
 
-  let mailOptions = {
+  const mailOptions = {
     from: mailer_name, // sender address
     to: receiverEmail, // list of receivers
     subject: 'Verify Your New Email Address', // Subject line
     html: `<a href="${verifyUrl}">Verify your email address</a>`
-  };
-  sendEmail(mailOptions);
-};
+  }
+  sendEmail(mailOptions)
+}

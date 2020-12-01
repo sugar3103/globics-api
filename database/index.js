@@ -17,10 +17,10 @@ const knex = require('knex')({
       reapIntervalMillis: 1000,
       createRetryIntervalMillis: 100,
       propagateCreateError: false
-    },
+    }
   }
-});
-const knexLogger = require('knex-logger')(knex);
-const bookshelf = require('bookshelf')(knex);
-bookshelf.plugin(require('bookshelf-eloquent'));
-module.exports = {bookshelf, knexLogger, knex};
+})
+const knexLogger = require('knex-logger')(knex)
+const bookshelf = require('bookshelf')(knex)
+bookshelf.plugin(require('bookshelf-eloquent'))
+module.exports = { bookshelf, knexLogger, knex }

@@ -6,7 +6,8 @@
   "scripts": {
     "test": "NODE_ENV=test mocha --timeout 60000 --exit",
     "start": "node app.js",
-    "dev": "NODE_ENV=dev nodemon app.js"
+    "dev": "NODE_ENV=dev nodemon app.js",
+    "lint": "eslint ."
   },
   "dependencies": {
     "bcrypt": "^5.0.0",
@@ -46,12 +47,18 @@
     "uuid": "^8.3.1"
   },
   "devDependencies": {
-    "nodemon": "^2.0.6",
-    "mocha": "^8.2.1",
     "chai": "^4.2.0",
-    "chai-http": "^4.3.0"
+    "chai-http": "^4.3.0",
+    "eslint": "^7.14.0",
+    "eslint-config-standard": "^16.0.2",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "mocha": "^8.2.1",
+    "nodemon": "^2.0.6",
+    "prettier": "^2.2.1"
   },
   "engines": {
-    "node": "10.x.x"
+    "node": "12.x.x"
   }
 }

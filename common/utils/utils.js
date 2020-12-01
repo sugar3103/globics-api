@@ -1,87 +1,87 @@
-const crypto = require('crypto');
-const url = require('url');
-const constants = require('./constants');
+const crypto = require('crypto')
+const url = require('url')
+const constants = require('./constants')
 
-exports.hash = (password, salt=null, digest=null) => {
-    salt = salt || crypto.randomBytes(16).toString('base64');
-    let hash = crypto.createHmac('sha512', salt).update(password).digest(digest || 'base64');
-    return hash;
-};
+exports.hash = (password, salt = null, digest = null) => {
+  salt = salt || crypto.randomBytes(16).toString('base64')
+  const hash = crypto.createHmac('sha512', salt).update(password).digest(digest || 'base64')
+  return hash
+}
 
-exports.generatePassword = (password, salt=null, digest=null) => {
-    salt = salt || crypto.randomBytes(16).toString(digest || 'base64');
-    let hash = this.hash(password, salt, digest);
-    return password = salt + "$" + hash;
+exports.generatePassword = (password, salt = null, digest = null) => {
+  salt = salt || crypto.randomBytes(16).toString(digest || 'base64')
+  const hash = this.hash(password, salt, digest)
+  return salt + '$' + hash
 }
 
 exports.fullUrl = (req) => {
-  let originalUrl = req.originalUrl;
-  
+  const originalUrl = req.originalUrl
+
   return url.format({
     protocol: 'https',
     host: req.get('host'),
     pathname: originalUrl
-  });
+  })
 }
 
-exports.buildErrorMsg = (msg, errorCode=null) => {
-  let err = {msg: msg};
+exports.buildErrorMsg = (msg, errorCode = null) => {
+  const err = { msg: msg }
   if (errorCode) {
-    err.code = errorCode;
+    err.code = errorCode
   }
-  return err;
+  return err
 }
 
 exports.buildErrorResponse = (msg, errorCode = constants.ERROR_CODE.UNKNOWN) => {
-    let errors = [this.buildErrorMsg(msg)];
-    return {
-        code: errorCode,
-        errors
-    }
+  const errors = [this.buildErrorMsg(msg)]
+  return {
+    code: errorCode,
+    errors
+  }
 }
 
-exports.buildDataResponse = ({data = {}, msg ='Success!', options = {}, code = constants.SUCCESS_CODE.SUCCESS}) => {
-    return {
-        code,
-        msg,
-        data,
-        ...options
-    }
+exports.buildDataResponse = ({ data = {}, msg = '', options = {}, code = constants.SUCCESS_CODE.SUCCESS }) => {
+  return {
+    code,
+    msg,
+    data,
+    ...options
+  }
 }
 
 exports.buildResponseObj = (bookshelfObj, keys) => {
-  for (let key in bookshelfObj.attributes) {
+  for (const key in bookshelfObj.attributes) {
     if (keys.indexOf(key) < 0) {
-        bookshelfObj.set(key, undefined);
+      bookshelfObj.set(key, undefined)
     }
   }
 }
 
 exports.formatResponseArr = (arr) => {
-  if (this.isEmptyOrNull(arr) || arr.length == 0) {
-    arr = null;
+  if (this.isEmptyOrNull(arr) || arr.length === 0) {
+    arr = null
   }
-  return {data: arr};
+  return { data: arr }
 }
 
 exports.responseUser = (user) => {
-  this.buildResponseObj(user, ['id', 'first_name', 'last_name', 'email', 'activated_at', 'created_at', 'activity_status']);
+  this.buildResponseObj(user, ['id', 'first_name', 'last_name', 'email', 'activated_at', 'created_at', 'activity_status'])
 }
 
 exports.isEmptyOrNull = (obj) => {
-  if (!obj) return true;
+  if (!obj) return true
 
-  for(let key in obj) {
-      if(obj.hasOwnProperty(key))
-          return false;
+  for (const key in obj) {
+    // eslint-disable-next-line no-prototype-builtins
+    if (obj.hasOwnProperty(key)) { return false }
   }
-  return true;
+  return true
 }
 
-exports.timeout = (ms) =>{
-  return new Promise(resolve => setTimeout(resolve, ms));
-};
+exports.timeout = (ms) => {
+  return new Promise(resolve => setTimeout(resolve, ms))
+}
 
 exports.isObject = (obj) => {
-  return obj === Object(obj);
+  return obj === Object(obj)
 }
