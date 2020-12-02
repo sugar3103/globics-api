@@ -7,5 +7,8 @@
 	"An unexpected error occured during updating user info.": "An unexpected error occured during updating user info.",
 	"User not found!": "User not found!",
 	"Sent succeeded!": "Sent succeeded!",
-	"Logged successfully!": "Logged successfully!"
+	"Logged successfully!": "Logged successfully!",
+	"E-mail is invalid": "E-mail is invalid",
+	"Email already in use": "Email already in use",
+	"Permission denied.": "Permission denied."
 }

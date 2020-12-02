@@ -21,11 +21,12 @@ exports.doLogin = async (req, res) => {
 
     const user = await UserModel.update(req.body.userId, { last_login_at: new Date() })
     const userInfo = await UserInfoModel.findByUserId(req.body.userId)
+    Utils.responseUser(user)
     const result = {
       accessToken: accessToken,
       refreshToken: refreshToken,
       user: {
-        ...user.toJSON({ hidden: ['password'] }),
+        ...user.toJSON(),
         userInfo: userInfo
       }
     }

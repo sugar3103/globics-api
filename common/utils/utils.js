@@ -65,7 +65,7 @@ exports.formatResponseArr = (arr) => {
 }
 
 exports.responseUser = (user) => {
-  this.buildResponseObj(user, ['id', 'first_name', 'last_name', 'email', 'activated_at', 'created_at', 'activity_status'])
+  this.buildResponseObj(user, ['id', 'first_name', 'last_name', 'email', 'activated_at', 'created_at'])
 }
 
 exports.isEmptyOrNull = (obj) => {

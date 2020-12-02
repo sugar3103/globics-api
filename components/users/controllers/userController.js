@@ -180,7 +180,7 @@ exports.getById = async (req, res) => {
   }
 
   Utils.responseUser(user)
-  return res.status(200).send(Utils.buildDataResponse({ data: { user, userInfo } }))
+  return res.status(200).send(Utils.buildDataResponse({ data: { user: { ...user.toJSON(), userInfo } } }))
 }
 
 exports.changePassword = async (req, res) => {

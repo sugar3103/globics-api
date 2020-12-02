@@ -15,6 +15,7 @@
         "no-undef": "off",
         "eqeqeq": "off",
         "no-extend-native": "off",
-        "node/handle-callback-err": "off"
+        "node/handle-callback-err": "off",
+        "no-return-assign": "off"
     }
 }

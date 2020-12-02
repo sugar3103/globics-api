@@ -16,7 +16,7 @@ exports.onlySameUserOrAdminCanDoThisAction = (req, res, next) => {
   const userRole = parseInt(req.jwt.role)
   const userId = req.jwt.userId
 
-  if (req.params && req.params.userId && userId === req.params.userId) {
+  if (req.params && req.params.userId && userId == req.params.userId) {
     return next()
   } else {
     if (userRole & constants.role.ADMIN) {
