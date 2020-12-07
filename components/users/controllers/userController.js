@@ -174,7 +174,7 @@ exports.sendResetPasswordToken = async (req, res) => {
                 ),
             );
     } else {
-        const expired = moment().add(1, 'minutes');
+        const expired = moment().add(5, 'minutes');
         const userData = JSON.stringify({ expired, user });
         const encrypted = Utils.encryptResetCode(JSON.stringify(userData));
         const resetLink = `http://${req.get(
