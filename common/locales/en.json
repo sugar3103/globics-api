@@ -10,5 +10,6 @@
 	"Logged successfully!": "Logged successfully!",
 	"E-mail is invalid": "E-mail is invalid",
 	"Email already in use": "Email already in use",
-	"Permission denied.": "Permission denied."
+	"Permission denied.": "Permission denied.",
+	"Reset code expired": "Reset code expired"
 }
