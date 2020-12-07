@@ -62,7 +62,7 @@ exports.sendResetPasswordEmail = (req, user, resetURL) => {
         subject: 'Globics Reset Your Password', // Subject line
         html: `You are receiving this email because we received a password request for your account. 
         Click on this link to <a href="${resetURL}">Reset Your Password</a>.
-        Please be notice that the reset link will be expired in 30 minutes`,
+        Please be notice that the reset link will be expired in 5 minutes, exceeded this time please request another one`,
     };
 
     sendEmail(mailOptions);
