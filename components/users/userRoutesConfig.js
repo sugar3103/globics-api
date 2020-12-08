@@ -38,7 +38,7 @@ router.post('/users/send-reset-code', [
     UsersController.sendResetPasswordToken,
 ]);
 
-router.get('/users/check-reset-code/:code', [
+router.post('/users/check-reset-code', [
     UsersController.checkResetPasswordCode,
 ]);
 

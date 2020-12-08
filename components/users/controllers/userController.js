@@ -178,11 +178,8 @@ exports.sendResetPasswordToken = async (req, res) => {
         const encrypted = Utils.encryptResetCode(
             JSON.stringify({ expired, user }),
         );
-        const resetLink = `http://${req.get(
-            'host',
-        )}/api/users/check-reset-code/${encrypted.iv}-${
-            encrypted.encryptedData
-        }`;
+        const serverName = req.headers.host.split(':')[0];
+        const resetLink = `http://${serverName}:3000/change-password/${encrypted.iv}-${encrypted.encryptedData}`;
         Mailer.sendResetPasswordEmail(req, user, resetLink);
         return res.status(200).send(
             Utils.buildDataResponse({
@@ -200,7 +197,7 @@ exports.sendResetPasswordToken = async (req, res) => {
  * @param {code: string} req
  */
 exports.checkResetPasswordCode = (req, res) => {
-    const { code } = req.params;
+    const { code } = req.body;
 
     return res.status(200).send(
         Utils.buildDataResponse({
@@ -251,14 +248,11 @@ exports.resetPassword = async (req, res) => {
                 }),
             );
     } else
-        return res
-            .status(301)
-            .send(
-                Utils.buildErrorResponse(
-                    res.__('Reset code expired'),
-                    constants.ERROR_CODE.SAVE_ERROR,
-                ),
-            );
+        return res.status(200).send(
+            Utils.buildDataResponse({
+                msg: { error: 'reset code expired' },
+            }),
+        );
 };
 
 exports.list = async (req, res) => {
