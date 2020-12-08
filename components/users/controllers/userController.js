@@ -186,7 +186,10 @@ exports.sendResetPasswordToken = async (req, res) => {
         Mailer.sendResetPasswordEmail(req, user, resetLink);
         return res.status(200).send(
             Utils.buildDataResponse({
-                msg: 'We have sent you an email to reset your password.',
+                msg: {
+                    success:
+                        'We have sent you an email to reset your password.',
+                },
             }),
         );
     }

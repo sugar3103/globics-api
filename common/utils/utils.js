@@ -47,8 +47,7 @@ exports.decryptResetCode = (hash) => {
     );
     let decrypted = decipher.update(encryptedText);
     decrypted = Buffer.concat([decrypted, decipher.final()]).toString();
-    const decryptedINJSON = JSON.parse(decrypted);
-    return JSON.parse(decryptedINJSON);
+    return JSON.parse(decrypted);
 };
 
 exports.checkResetToken = (code) => {

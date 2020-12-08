@@ -42,7 +42,7 @@ router.get('/users/check-reset-code/:code', [
     UsersController.checkResetPasswordCode,
 ]);
 
-router.get('/users/reset-password/', [UsersController.resetPassword]);
+router.post('/users/reset-password/', [UsersController.resetPassword]);
 
 router.get('/users', [
     AuthValidationMiddleware.validJWTNeeded,
