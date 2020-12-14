@@ -3,9 +3,7 @@ const moment = require('moment')
 const UserInfoModel = require('../models/userInfoModel')
 const Utils = require('../../../utils/allUtils')
 const Mailer = require('../../../utils/mailer')
-// const shortid = require('shortid')
 const constants = require('../../../common/utils/constants')
-// const url = require('url')
 const { checkResetToken } = require('../../../utils/allUtils')
 
 const jwtSecret = process.env.jwt_secret
@@ -186,7 +184,7 @@ exports.sendResetPasswordToken = async (req, res) => {
       Utils.buildDataResponse({
         msg: {
           success:
-                        'We have sent you an email to reset your password.'
+            'We have sent you an email to reset your password.'
         }
       })
     )
@@ -229,7 +227,8 @@ exports.resetPassword = async (req, res) => {
   } else if (!isExpired) {
     const hashPassword = Utils.generatePassword(newPassword)
     const user = await UserModel.update(decrypted.user.id, {
-      password: hashPassword
+      password: hashPassword,
+      activated_at: new Date()
     })
     if (!user) {
       return res
