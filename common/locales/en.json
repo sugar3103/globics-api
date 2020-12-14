@@ -11,5 +11,6 @@
 	"E-mail is invalid": "E-mail is invalid",
 	"Email already in use": "Email already in use",
 	"Permission denied.": "Permission denied.",
-	"Reset code expired": "Reset code expired"
+	"Reset code expired": "Reset code expired",
+	"Invalid email or password.": "Invalid email or password."
 }

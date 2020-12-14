@@ -1,0 +1,24 @@
+{
+    "env": {
+        "browser": true,
+        "commonjs": true,
+        "es2021": true
+    },
+    "extends": [
+        "standard"
+    ],
+    "plugins": [
+        "standard"
+    ],
+    "rules": {
+        "camelcase": "off",
+        "no-undef": "off",
+        "eqeqeq": "off",
+        "no-extend-native": "off",
+        "node/handle-callback-err": "off",
+        "no-return-assign": "off"
+    },
+    "parserOptions": {
+        "ecmaVersion": 12
+    }
+}

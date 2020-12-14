@@ -303,7 +303,7 @@
         },
 
         "/users/check-reset-code/{code}": {
-            "get": {
+            "post": {
                 "tags": ["user"],
                 "summary": "Check whether reset code is expired",
                 "operationId": "users/check-reset-code/:code",
@@ -325,33 +325,36 @@
             }
         },
 
-        "/users/forgotpassword": {
-            "post": {
+        "/users/reset-password": {
+            "get": {
                 "tags": ["user"],
-                "summary": "Forgot password",
-                "operationId": "users/forgetpassword",
+                "summary": "Change user password to a new one",
+                "operationId": "users/reset-password",
                 "consumes": ["application/json"],
                 "produces": ["application/json"],
                 "parameters": [
                     {
-                        "in": "body",
-                        "name": "body",
-                        "description": "Email",
+                        "in": "path",
+                        "name": "code",
                         "required": true,
-                        "schema": {
-                            "type": "object",
-                            "properties": {
-                                "email": {
-                                    "type": "string",
-                                    "example": "hai.tran@terralogic.com"
-                                }
-                            }
-                        }
+                        "example": "d636990f2ae45a08d3aade709d666e9c-103b20ea0e5cc082d7b0d67bafa96b12141c24ea68b49af8bcd89e160bb757c2ff4d376b2c666114f41d202316ea21a918143023fbb87bd4121151cb4f8293401d3bb939acdb4362f087b062fabb8e0329a97e52936d979d6b0470d95debc1903dad14a92239701bfbf06851b847043c849afeb85e75f791abea6b46e863a4e65af2dddde9d8816e5cecdcfaf63835f225f3a629ad3941f6228a98935d257c77b1b6a529bae8b2fc65475a76d54056c0cf15df3afe575509eafe588ed4f5846e34bc91335da4441539d58f6a09ebbd6caeff5fae787ac270ffdfdb1b769fee6d67f84b348a84dca246cdae6cde7bef6c168a8c9a527b2aaf6a771339cfc012e0fcafcbd5ea57c1caa947bb67fa38b730c5d736d80c12155605aeca8fec6d4798ac239645129d5462ebe6e14f8752f7af61a4ca7bbcae4aded5b9c9cd378c42efb7c9a732746e5da6d3a3a4d49d076063a9972c54d2227e4e8f9e664459b546a2d16c7d579211d373fb697215f485d5eeae9a1c7fbdcfd924356f080d8266c8e310e7f786f62ca078feba74993d3669ebfe969546b5b3576b72327f18eb3c567101886692e3c85ebf03d25fb26350590bce0c5b3ded937cfb944be2fc6bd0365ba0dd25ebf3447d79ad3bd2d48808a9e0f42a8bdaa0c1352099f2425af248a6595f63baa14e11bbbc12eb4c54f44b65e9"
+                    },
+                    {
+                        "in": "path",
+                        "name": "newPassword",
+                        "required": true,
+                        "example": "12345678@Ab"
                     }
                 ],
-                "responses": {}
+                "responses": {
+                    "200": { "success": "Update user password successed" },
+                    "301": {
+                        "error": "reset code expired"
+                    }
+                }
             }
         },
+
         "/users/forgotaccount": {
             "post": {
                 "tags": ["user"],
