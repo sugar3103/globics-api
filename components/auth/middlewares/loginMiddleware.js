@@ -57,9 +57,9 @@ exports.processSocialLoginToken = async (req, res, next) => {
   }
 
   // Check activated for security reason.
-  if (!user.get('activated_at')) {
-    return res.status(200).send(Utils.buildErrorResponse(res.__('Your account has not been activated. Please check your email then activate your account.'), constants.ERROR_CODE.ACCOUNT_NOT_ACTIVE))
-  }
+  // if (!user.get('activated_at')) {
+  //   return res.status(200).send(Utils.buildErrorResponse(res.__('Your account has not been activated. Please check your email then activate your account.'), constants.ERROR_CODE.ACCOUNT_NOT_ACTIVE))
+  // }
 
   req.body = {
     userId: user.get('id'),
