@@ -228,7 +228,7 @@ exports.resetPassword = async (req, res) => {
     const hashPassword = Utils.generatePassword(newPassword)
     const user = await UserModel.update(decrypted.user.id, {
       password: hashPassword,
-      activated_at: new Date()
+      activated_at: moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
     })
     if (!user) {
       return res

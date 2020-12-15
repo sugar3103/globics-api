@@ -13,5 +13,7 @@
 	"Permission denied.": "Permission denied.",
 	"Reset code expired": "Reset code expired",
 	"Invalid email or password.": "Invalid email or password.",
-	"Invalid params.": "Invalid params."
+	"Invalid params.": "Invalid params.",
+	"type should be facebook/google/apple": "type should be facebook/google/apple",
+	"Logged out successfully.": "Logged out successfully."
 }
