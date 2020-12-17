@@ -15,5 +15,7 @@
 	"Invalid email or password.": "Invalid email or password.",
 	"Invalid params.": "Invalid params.",
 	"type should be facebook/google/apple": "type should be facebook/google/apple",
-	"Logged out successfully.": "Logged out successfully."
+	"Logged out successfully.": "Logged out successfully.",
+	"Invalid token.": "Invalid token.",
+	"Password must contain at least 8 characters, one uppercase letter, one number and one special character": "Password must contain at least 8 characters, one uppercase letter, one number and one special character"
 }
