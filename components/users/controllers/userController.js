@@ -8,14 +8,38 @@ const { checkResetToken } = require('../../../utils/allUtils')
 
 const jwtSecret = process.env.jwt_secret
 
+const generateTokenEmail = (req, res, user, isReset) => {
+  if (isReset) {
+    const expired = moment().add(5, 'minutes')
+    const encrypted = Utils.encryptResetCode(
+      JSON.stringify({ expired, user })
+    )
+    const serverName = req.headers.host.split(':')[0]
+    const resetLink = `http://${serverName}:3000/users/${encrypted.iv}-${encrypted.encryptedData}`
+    Mailer.sendResetPasswordEmail(req, user, resetLink)
+  }
+
+  return res.status(200).send(
+    Utils.buildDataResponse({
+      msg: {
+        success:
+          'We have sent you an email, please follow the instruction in it.'
+      }
+    })
+  )
+}
+
 /**
- * Register user
+ * Register / Login User
+ * @param (email)
  */
-exports.create = async (req, res) => {
-  req.body.password = Utils.generatePassword(req.body.password)
-  req.body.permissionLevel = 1
-  const user = await UserModel.create(req.body)
-  if (!user) {
+exports.signUpIn = async (req, res) => {
+  const { email } = req.body
+  const user = await UserModel.findByEmail(email)
+
+  if (user) {
+    generateTokenEmail(req, res, user)
+
     return res
       .status(200)
       .send(
@@ -24,6 +48,9 @@ exports.create = async (req, res) => {
           constants.ERROR_CODE.SAVE_ERROR
         )
       )
+  } else {
+    const newUser = await UserModel.create(email)
+    generateTokenEmail(req, res, newUser)
   }
   setImmediate(() => {
     Mailer.sendActivationEmail(req, user)
@@ -173,21 +200,7 @@ exports.sendResetPasswordToken = async (req, res) => {
         )
       )
   } else {
-    const expired = moment().add(5, 'minutes')
-    const encrypted = Utils.encryptResetCode(
-      JSON.stringify({ expired, user })
-    )
-    const serverName = req.headers.host.split(':')[0]
-    const resetLink = `http://${serverName}:3000/change-password/${encrypted.iv}-${encrypted.encryptedData}`
-    Mailer.sendResetPasswordEmail(req, user, resetLink)
-    return res.status(200).send(
-      Utils.buildDataResponse({
-        msg: {
-          success:
-                        'We have sent you an email to reset your password.'
-        }
-      })
-    )
+    generateTokenEmail(req, res, user, true)
   }
 }
 

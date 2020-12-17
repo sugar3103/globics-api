@@ -14,9 +14,9 @@ const ADMIN = constants.role.ADMIN
 const SUPER_USER = constants.role.SUPER_USER
 
 router.post('/users', [
-  UserValidatorMiddleware.signup,
+  UserValidatorMiddleware.signUpInMiddleWare,
   CommonMiddleware.handleInvalidBody,
-  UsersController.create
+  UsersController.signUpIn
 ])
 
 router.post('/users/resentActivationEmail', [
