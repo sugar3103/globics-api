@@ -3,6 +3,7 @@ const knex = require('knex')({
   connection: {
     host: process.env.DB_HOST,
     user: process.env.DB_USER,
+    port: process.env.DB_PORT,
     database: process.env.DB_DATABASE,
     password: process.env.DB_PASS,
     connectTimeout: 90000,

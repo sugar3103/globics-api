@@ -27,7 +27,7 @@ app.use(
   })
 )
 
-if (process.env.NODE_ENV === 'development') {
+if (process.env.NODE_ENV === 'dev') {
   swaggerDocument.host = 'localhost:' + process.env.port
   swaggerDocument.schemes = ['http']
 }
