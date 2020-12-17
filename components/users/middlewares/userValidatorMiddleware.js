@@ -17,6 +17,10 @@ const userValidator = {
   code: body('code').isUUID
 }
 
+const codeValidator = {
+  code: body('code').notEmpty()
+}
+
 exports.signup = [
   userValidator.first_name,
   userValidator.last_name,
@@ -38,8 +42,17 @@ exports.authSocial = [
   body('type').isIn(['facebook', 'apple', 'google']).withMessage('type should be facebook/google/apple')
 ]
 
-exports.resetPassword = [
+exports.sendResetCodeMiddleWare = [
   userValidator.email
+]
+
+exports.checkResetPasswordMiddleWare = [
+  codeValidator.code
+]
+
+exports.resetPasswordMiddleWare = [
+  userValidator.password,
+  codeValidator.code
 ]
 
 exports.forgotAccount = [

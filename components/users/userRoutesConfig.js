@@ -33,16 +33,19 @@ router.get('/users/verify/:userId/:email/:code', [
 ])
 
 router.post('/users/send-reset-code', [
-  UserValidatorMiddleware.resetPassword,
+  UserValidatorMiddleware.sendResetCodeMiddleWare,
   CommonMiddleware.handleInvalidBody,
   UsersController.sendResetPasswordToken
 ])
 
 router.post('/users/check-reset-code', [
+  UserValidatorMiddleware.checkResetPasswordMiddleWare,
   UsersController.checkResetPasswordCode
 ])
 
-router.post('/users/reset-password/', [UsersController.resetPassword])
+router.post('/users/reset-password/', [
+  UserValidatorMiddleware.resetPasswordMiddleWare,
+  UsersController.resetPassword])
 
 router.get('/users', [
   AuthValidationMiddleware.validJWTNeeded,

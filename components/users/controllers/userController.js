@@ -184,7 +184,7 @@ exports.sendResetPasswordToken = async (req, res) => {
       Utils.buildDataResponse({
         msg: {
           success:
-            'We have sent you an email to reset your password.'
+                        'We have sent you an email to reset your password.'
         }
       })
     )
@@ -211,21 +211,12 @@ exports.checkResetPasswordCode = (req, res) => {
  * @param { newPassword : string } req.body
  */
 exports.resetPassword = async (req, res) => {
-  const { code, newPassword } = req.body
+  const { code, password } = req.body
   const decryptedData = checkResetToken(code)
   const { decrypted, isExpired } = decryptedData
 
-  if (!code || !newPassword) {
-    return res
-      .status(200)
-      .send(
-        Utils.buildErrorResponse(
-          res.__('Invalid params.'),
-          constants.ERROR_CODE.INVALID
-        )
-      )
-  } else if (!isExpired) {
-    const hashPassword = Utils.generatePassword(newPassword)
+  if (!isExpired) {
+    const hashPassword = Utils.generatePassword(password)
     const user = await UserModel.update(decrypted.user.id, {
       password: hashPassword,
       activated_at: moment(new Date()).format('YYYY-MM-DD HH:mm:ss')

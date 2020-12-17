@@ -341,7 +341,7 @@
                     },
                     {
                         "in": "path",
-                        "name": "newPassword",
+                        "name": "password",
                         "required": true,
                         "example": "12345678@Ab"
                     }

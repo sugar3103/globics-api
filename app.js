@@ -19,7 +19,7 @@ i18n.configure({
 })
 app.use(i18n.init)
 
-app.use(cors({ origin: '*' }))
+app.use(cors())
 app.use(
   fileUpload({
     useTempFiles: true,
