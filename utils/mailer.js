@@ -15,7 +15,7 @@ const sendEmail = async (mailOptions) => {
   })
   try {
     const info = await transporter.sendMail(mailOptions)
-    if (process.env.NODE_ENV === 'dev') { console.info('Email sent: %s', info.messageId) }
+    console.info('Email sent: %s', info.messageId)
     return true
   } catch (e) {
     console.error(e)
