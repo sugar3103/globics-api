@@ -83,7 +83,6 @@ exports.search = async (pageSize = 1000000, page = 1, search) => {
 }
 
 exports.create = async (userData, avatar = null) => {
-  console.log('user data in create', userData)
   try {
     const user = await this.User.forge({
       email: userData.email.toLowerCase()

@@ -9,17 +9,16 @@ const { checkResetToken, ranNum } = require('../../../utils/allUtils')
 const jwtSecret = process.env.jwt_secret
 
 const generateTokenEmail = async (req, res, user, isReset) => {
-  const expired = moment().add(5, 'minutes')
-  const encrypted = Utils.encryptResetCode(
-    JSON.stringify({ expired, user })
-  )
-  const serverName = req.headers.host.split(':')[0]
-  const resetLink = `http://${serverName}:3000/users/${encrypted.iv}-${encrypted.encryptedData}`
-  const ranNumForUser = ranNum(4)
-
   if (isReset) {
+    const expired = moment().add(5, 'minutes')
+    const encrypted = Utils.encryptResetCode(
+      JSON.stringify({ expired, user })
+    )
+    const serverName = req.headers.host.split(':')[0]
+    const resetLink = `http://${serverName}:3000/users/${encrypted.iv}-${encrypted.encryptedData}`
     Mailer.sendResetPasswordEmail(req, user, resetLink)
   } else {
+    const ranNumForUser = ranNum(4)
     const updateUser = await UserModel.update(user.id, { passcode: ranNumForUser })
     if (updateUser) {
       Mailer.sendSignUpInEmail(req, user, ranNumForUser)
