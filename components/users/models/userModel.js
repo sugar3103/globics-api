@@ -83,17 +83,13 @@ exports.search = async (pageSize = 1000000, page = 1, search) => {
 }
 
 exports.create = async (userData, avatar = null) => {
+  console.log('user data in create', userData)
   try {
     const user = await this.User.forge({
-      email: userData.email.toLowerCase(),
-      password: userData.password,
-      social_id: userData.social_id,
-      first_name: userData.first_name,
-      last_name: userData.last_name
+      email: userData.email.toLowerCase()
     }).save()
     UserInfo.forge({
-      user_id: user.id,
-      avatar: avatar
+      user_id: user.id
     }).save(null, { method: 'insert' })
     return user
   } catch (err) {

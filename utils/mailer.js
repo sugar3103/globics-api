@@ -15,7 +15,7 @@ const sendEmail = async (mailOptions) => {
   })
   try {
     const info = await transporter.sendMail(mailOptions)
-    console.info('Email sent: %s', info.messageId)
+    if (process.env.NODE_ENV === 'dev') { console.info('Email sent: %s', info.messageId) }
     return true
   } catch (e) {
     console.error(e)
@@ -23,34 +23,20 @@ const sendEmail = async (mailOptions) => {
   }
 }
 
-exports.sendActivationEmail = async (req, user) => {
-  const activateCode = Utils.generatePassword(
-    user.get('id') + jwtSecret,
-    null,
-    'hex'
-  )
-  const activateURL = `${Utils.fullUrl(req)}/activate/${user.get(
-        'id'
-    )}/${activateCode}`
-
-  console.info('Activation Link: ' + activateURL)
-
+exports.sendSignUpInEmail = async (req, user, ranNum) => {
   // send mail with defined transport object
   const mailOptions = {
     from: mailer_name, // sender address
     to: user.get('email'), // list of receivers
-    subject: 'Globics Customer Account Activation', // Subject line
-    html: `<h3>Thanks for signing up for Globics!</h3> </br>Please activate your account at <a href="${activateURL}">Activate Your Account</a>`
+    subject: 'Globics Customer Account Login', // Subject line
+    html: `<h3>Thanks for registered with Globics!</h3> 
+           </br>
+          Please sign in with this activation code
+          <br>
+          <h1>${ranNum}</h1>`
   }
 
-  for (let i = 0; i < 3; i++) {
-    if (await sendEmail(mailOptions)) {
-      break
-    } else {
-      console.error(`Error (${i}): send email to ${mailOptions.to}`)
-      if (i < 2) await Utils.timeout(60000)
-    }
-  }
+  sendEmail(mailOptions)
 }
 
 exports.sendResetPasswordEmail = (req, user, resetURL) => {

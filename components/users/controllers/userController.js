@@ -4,19 +4,26 @@ const UserInfoModel = require('../models/userInfoModel')
 const Utils = require('../../../utils/allUtils')
 const Mailer = require('../../../utils/mailer')
 const constants = require('../../../common/utils/constants')
-const { checkResetToken } = require('../../../utils/allUtils')
+const { checkResetToken, ranNum } = require('../../../utils/allUtils')
 
 const jwtSecret = process.env.jwt_secret
 
-const generateTokenEmail = (req, res, user, isReset) => {
+const generateTokenEmail = async (req, res, user, isReset) => {
+  const expired = moment().add(5, 'minutes')
+  const encrypted = Utils.encryptResetCode(
+    JSON.stringify({ expired, user })
+  )
+  const serverName = req.headers.host.split(':')[0]
+  const resetLink = `http://${serverName}:3000/users/${encrypted.iv}-${encrypted.encryptedData}`
+  const ranNumForUser = ranNum(4)
+
   if (isReset) {
-    const expired = moment().add(5, 'minutes')
-    const encrypted = Utils.encryptResetCode(
-      JSON.stringify({ expired, user })
-    )
-    const serverName = req.headers.host.split(':')[0]
-    const resetLink = `http://${serverName}:3000/users/${encrypted.iv}-${encrypted.encryptedData}`
     Mailer.sendResetPasswordEmail(req, user, resetLink)
+  } else {
+    const updateUser = await UserModel.update(user.id, { passcode: ranNumForUser })
+    if (updateUser) {
+      Mailer.sendSignUpInEmail(req, user, ranNumForUser)
+    } else res.status(200).send(Utils.buildErrorResponse({ msg: 'error update user' }))
   }
 
   return res.status(200).send(
@@ -31,7 +38,7 @@ const generateTokenEmail = (req, res, user, isReset) => {
 
 /**
  * Register / Login User
- * @param (email)
+ * @param { email : string } req.body
  */
 exports.signUpIn = async (req, res) => {
   const { email } = req.body
@@ -39,24 +46,10 @@ exports.signUpIn = async (req, res) => {
 
   if (user) {
     generateTokenEmail(req, res, user)
-
-    return res
-      .status(200)
-      .send(
-        Utils.buildErrorResponse(
-          res.__('An unexpected error occurred during saving user.'),
-          constants.ERROR_CODE.SAVE_ERROR
-        )
-      )
   } else {
-    const newUser = await UserModel.create(email)
+    const newUser = await UserModel.create({ email })
     generateTokenEmail(req, res, newUser)
   }
-  setImmediate(() => {
-    Mailer.sendActivationEmail(req, user)
-  })
-  Utils.responseUser(user)
-  return res.status(201).send(Utils.buildDataResponse({ data: user }))
 }
 
 /**

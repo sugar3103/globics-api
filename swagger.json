@@ -124,7 +124,7 @@
         "/users": {
             "post": {
                 "tags": ["user"],
-                "summary": "Register user",
+                "summary": "Register / Login user",
                 "operationId": "addUser",
                 "consumes": ["application/json"],
                 "produces": ["application/json"],
@@ -132,7 +132,7 @@
                     {
                         "in": "body",
                         "name": "body",
-                        "description": "User object that needs to be registered",
+                        "description": "User object that needs to be registered or login",
                         "required": true,
                         "schema": {
                             "$ref": "#/definitions/RegisterUser"
@@ -675,21 +675,9 @@
         "RegisterUser": {
             "type": "object",
             "properties": {
-                "first_name": {
-                    "type": "string",
-                    "example": "Hai"
-                },
-                "last_name": {
-                    "type": "string",
-                    "example": "Tran"
-                },
                 "email": {
                     "type": "string",
                     "example": "hai.tran@gmail.com"
-                },
-                "password": {
-                    "type": "string",
-                    "example": "12345678@Ab"
                 }
             },
             "xml": {
