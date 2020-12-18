@@ -6,7 +6,7 @@
     "scripts": {
         "test": "NODE_ENV=test mocha --timeout 60000 --exit",
         "start": "node app.js",
-        "dev": "NODE_ENV=dev nodemon app.js",
+        "dev": "NODE_ENV=dev nodemon -x 'node app.js || touch app.js'",
         "lint": "eslint . --fix"
     },
     "dependencies": {

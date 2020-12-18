@@ -19,12 +19,6 @@ router.post('/users', [
   UsersController.signUpIn
 ])
 
-router.post('/users/resentActivationEmail', [
-  UserValidatorMiddleware.resentActivationEmail,
-  CommonMiddleware.handleInvalidBody,
-  UsersController.resentActivationEmail
-])
-
 router.get('/users/activate/:userId/:code', [UsersController.activate])
 
 router.get('/users/verify/:userId/:email/:code', [

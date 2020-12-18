@@ -2,6 +2,7 @@ const { bookshelf } = database
 const { UserInfo } = require('./userInfoModel')
 const RESPONSE_USER_COLUMNS = ['id', 'first_name', 'last_name', 'email', 'role', 'activated_at', 'fcm_token', 'last_login_at', 'created_at', 'updated_at']
 const Utils = require('../../../utils/allUtils')
+const Mailer = require('../../../utils/mailer')
 
 exports.User = bookshelf.Model.extend({
   tableName: 'user',
@@ -85,7 +86,8 @@ exports.search = async (pageSize = 1000000, page = 1, search) => {
 exports.create = async (userData, avatar = null) => {
   try {
     const user = await this.User.forge({
-      email: userData.email.toLowerCase()
+      email: userData.email.toLowerCase(),
+      created_at: new Date()
     }).save()
     UserInfo.forge({
       user_id: user.id
@@ -140,4 +142,31 @@ exports.findAccount = async (first_name, last_name, birth_date) => {
     logger.error(e)
     return null
   }
+}
+
+exports.genTokenOrNumberEmail = (req, res, user, isReset) => {
+  if (isReset) {
+    const expired = moment().add(5, 'minutes')
+    const encrypted = Utils.encryptResetCode(
+      JSON.stringify({ expired, user })
+    )
+    const serverName = req.headers.host.split(':')[0]
+    const resetLink = `http://${serverName}:3000/users/${encrypted.iv}-${encrypted.encryptedData}`
+
+    Mailer.sendResetPasswordEmail(req, user, resetLink)
+  } else {
+    const ranNumForUser = Utils.ranNum(4)
+    const updateUser = this.update(user.id, { passcode: ranNumForUser })
+    if (updateUser) {
+      setImmediate(() => Mailer.sendSignUpInEmail(req, user, ranNumForUser))
+    } else res.status(200).send(Utils.buildErrorResponse({ msg: res.__('error update user') }))
+  }
+
+  return res.status(200).send(
+    Utils.buildDataResponse({
+      msg: res.__(
+        'We have sent you an email, please follow the instruction in it.'
+      )
+    })
+  )
 }

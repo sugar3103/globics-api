@@ -36,7 +36,14 @@ exports.sendSignUpInEmail = async (req, user, ranNum) => {
           <h1>${ranNum}</h1>`
   }
 
-  sendEmail(mailOptions)
+  for (let i = 0; i < 3; i++) {
+    if (await sendEmail(mailOptions)) {
+      break
+    } else {
+      console.error(`Error (${i}): send email to ${mailOptions.to}`)
+      if (i < 2) await Utils.timeout(60000)
+    }
+  }
 }
 
 exports.sendResetPasswordEmail = (req, user, resetURL) => {

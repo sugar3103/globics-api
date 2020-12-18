@@ -24,18 +24,19 @@ DROP TABLE IF EXISTS `user`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `user` (
   `id` int unsigned NOT NULL AUTO_INCREMENT,
-  `first_name` varchar(20) NOT NULL,
-  `last_name` varchar(20) NOT NULL,
+  `first_name` varchar(20),
+  `last_name` varchar(20),
   `email` varchar(40) NOT NULL,
   `social_id` varchar(100) DEFAULT NULL,
-  `password` varchar(256) NOT NULL,
-  `role` tinyint(1) NOT NULL DEFAULT '0',
+  `password` varchar(256),
+  `passcode` varchar(16) NULL DEFAULT NULL,
+  `role` tinyint(1) DEFAULT '0',
   `fcm_token` varchar(256) DEFAULT NULL,
   `activated_at` timestamp NULL DEFAULT NULL,
   `last_login_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `deleted_at` timestamp NULL DEFAULT NULL,
-  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `created_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;

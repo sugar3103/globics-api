@@ -1,39 +1,11 @@
 const UserModel = require('../models/userModel')
-const moment = require('moment')
 const UserInfoModel = require('../models/userInfoModel')
 const Utils = require('../../../utils/allUtils')
-const Mailer = require('../../../utils/mailer')
 const constants = require('../../../common/utils/constants')
-const { checkResetToken, ranNum } = require('../../../utils/allUtils')
+const { checkResetToken } = require('../../../utils/allUtils')
+const { genTokenOrNumberEmail } = require('../models/userModel')
 
 const jwtSecret = process.env.jwt_secret
-
-const generateTokenEmail = async (req, res, user, isReset) => {
-  if (isReset) {
-    const expired = moment().add(5, 'minutes')
-    const encrypted = Utils.encryptResetCode(
-      JSON.stringify({ expired, user })
-    )
-    const serverName = req.headers.host.split(':')[0]
-    const resetLink = `http://${serverName}:3000/users/${encrypted.iv}-${encrypted.encryptedData}`
-    Mailer.sendResetPasswordEmail(req, user, resetLink)
-  } else {
-    const ranNumForUser = ranNum(4)
-    const updateUser = await UserModel.update(user.id, { passcode: ranNumForUser })
-    if (updateUser) {
-      Mailer.sendSignUpInEmail(req, user, ranNumForUser)
-    } else res.status(200).send(Utils.buildErrorResponse({ msg: 'error update user' }))
-  }
-
-  return res.status(200).send(
-    Utils.buildDataResponse({
-      msg: {
-        success:
-          'We have sent you an email, please follow the instruction in it.'
-      }
-    })
-  )
-}
 
 /**
  * Register / Login User
@@ -44,36 +16,11 @@ exports.signUpIn = async (req, res) => {
   const user = await UserModel.findByEmail(email)
 
   if (user) {
-    generateTokenEmail(req, res, user)
+    genTokenOrNumberEmail(req, res, user)
   } else {
     const newUser = await UserModel.create({ email })
-    generateTokenEmail(req, res, newUser)
+    genTokenOrNumberEmail(req, res, newUser)
   }
-}
-
-/**
- * Resent Activation Email
- */
-
-exports.resentActivationEmail = async (req, res) => {
-  const { email } = req.body
-  const user = await UserModel.findByEmail(email)
-  if (!user) {
-    return res
-      .status(200)
-      .send(
-        Utils.buildErrorResponse(
-          res.__('User not found!'),
-          constants.ERROR_CODE.USER_NOT_FOUND
-        )
-      )
-  }
-  setImmediate(() => {
-    Mailer.sendActivationEmail(req, user)
-  })
-  return res
-    .status(201)
-    .send(Utils.buildDataResponse({ msg: res.__('Sent succeeded!') }))
 }
 
 /**
@@ -192,7 +139,7 @@ exports.sendResetPasswordToken = async (req, res) => {
         )
       )
   } else {
-    generateTokenEmail(req, res, user, true)
+    genTokenOrNumberEmail(req, res, user, true)
   }
 }
 
@@ -224,7 +171,7 @@ exports.resetPassword = async (req, res) => {
     const hashPassword = Utils.generatePassword(password)
     const user = await UserModel.update(decrypted.user.id, {
       password: hashPassword,
-      activated_at: moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
+      activated_at: new Date()
     })
     if (!user) {
       return res
