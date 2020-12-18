@@ -18,20 +18,17 @@ const userValidator = {
 }
 
 const codeValidator = {
-  code: body('code').notEmpty()
+  code: body('code').notEmpty(),
+  passcode: body('passcode').notEmpty()
 }
 
 exports.signUpInMiddleWare = [
   userValidator.email
 ]
 
-// exports.signup = [
-//   userValidator.first_name,
-//   userValidator.last_name,
-//   userValidator.email,
-//   userValidator.password,
-//   userValidator.email_already_in_use
-// ]
+exports.checkPasscodeMiddleWare = [
+  codeValidator.passcode
+]
 
 exports.resentActivationEmail = [
   userValidator.email

@@ -175,6 +175,40 @@
                 "responses": {}
             }
         },
+        "/users/check-passcode": {
+            "post":{
+                "tags":["user"],
+                "operationId": "checkpasscode",
+                "summary": "check the passcode sent from user",
+                "consumes":["application/json"],
+                "produces": ["application/json"],
+                
+                "parameters":[
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "type": "string",
+                        "required": true,
+                        "schema":{
+                            "type":"object",
+                            "properties": {
+                                "email": {
+                                    "type": "string",
+                                    "example": "duong.phan@terralogic.com"
+                                },
+                                "passcode": {
+                                    "type": "string",
+                                    "example": "9865"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses":{
+                    
+                }
+            }
+        },
         "/users/search": {
             "get": {
                 "tags": ["user"],

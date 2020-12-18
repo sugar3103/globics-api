@@ -18,5 +18,8 @@
 	"Logged out successfully.": "Logged out successfully.",
 	"Invalid access token.": "Invalid access token.",
 	"Invalid token.": "Invalid token.",
-	"We have sent you an email, please follow the instruction in it.": "We have sent you an email, please follow the instruction in it."
+	"We have sent you an email, please follow the instruction in it.": "We have sent you an email, please follow the instruction in it.",
+	"wait for 5 minutes to resend": "wait for 5 minutes to resend",
+	"Passcode Incorrect": "Passcode Incorrect",
+	"Passcode Correct": "Passcode Correct"
 }

@@ -19,6 +19,12 @@ router.post('/users', [
   UsersController.signUpIn
 ])
 
+router.post('/users/check-passcode', [
+  UserValidatorMiddleware.checkPasscodeMiddleWare,
+  CommonMiddleware.handleInvalidBody,
+  UsersController.checkPassCode
+])
+
 router.get('/users/activate/:userId/:code', [UsersController.activate])
 
 router.get('/users/verify/:userId/:email/:code', [

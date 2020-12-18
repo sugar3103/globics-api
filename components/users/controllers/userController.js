@@ -1,9 +1,10 @@
 const UserModel = require('../models/userModel')
 const UserInfoModel = require('../models/userInfoModel')
 const Utils = require('../../../utils/allUtils')
+const moment = require('moment')
 const constants = require('../../../common/utils/constants')
-const { checkResetToken } = require('../../../utils/allUtils')
-const { genTokenOrNumberEmail } = require('../models/userModel')
+const { checkResetToken, ranNum } = require('../../../utils/allUtils')
+const { generateResetTokenEmail } = require('../models/userModel')
 
 const jwtSecret = process.env.jwt_secret
 
@@ -13,19 +14,57 @@ const jwtSecret = process.env.jwt_secret
  */
 exports.signUpIn = async (req, res) => {
   const { email } = req.body
+  const { sendEmailAndUpdate } = UserModel
+  const ranNumForUser = ranNum(4)
+
   const user = await UserModel.findByEmail(email)
 
   if (user) {
-    genTokenOrNumberEmail(req, res, user)
+    const limitExpired = moment().subtract(5, 'minutes').isAfter(user.get('updated_at'))
+    process.env.NODE_ENV === 'dev'
+      ? sendEmailAndUpdate({ req, res, user, ranNumForUser, needUpdate: true })
+      : limitExpired
+        ? sendEmailAndUpdate({ req, res, user, ranNumForUser, needUpdate: true })
+        : res.status(200).send(Utils.buildErrorResponse(res.__('wait for 5 minutes to resend')))
   } else {
-    const newUser = await UserModel.create({ email })
-    genTokenOrNumberEmail(req, res, newUser)
+    const newUser = await UserModel.create({ email, passcode: ranNumForUser })
+    newUser
+      ? sendEmailAndUpdate({ req, res, newUser })
+      : res.status(200).send(Utils.buildErrorResponse(
+        res.__('Error update user'),
+        constants.ERROR_CODE.UPDATEUSER_ERROR
+      ))
+  }
+}
+/**
+   * Check passcode from user is matched with passcode in DB
+   * @param { email : string} req.body
+   * @param { passcode : string} req.body
+   */
+exports.checkPassCode = async (req, res) => {
+  const { email, passcode } = req.body
+  const user = await UserModel.findByEmail(email)
+
+  if (user) {
+    passcode === user.get('passcode')
+      ? res.status(200).send(Utils.buildDataResponse({ msg: res.__('Passcode Correct') }))
+      : res.status(200).send(
+        Utils.buildErrorResponse(
+          res.__('Passcode Incorrect'),
+          constants.ERROR_CODE.PASSCODE_INCORRECT
+        ))
+  } else {
+    res.status(200).send(
+      Utils.buildErrorResponse(
+        res.__('Email not existed'),
+        constants.ERROR_CODE.EMAIL_NO_EXISTS
+      ))
   }
 }
 
 /**
- * Active account after registered
- */
+   * Active account after registered
+   */
 exports.activate = async (req, res) => {
   const userId = req.params.userId
   const code = req.params.code
@@ -122,9 +161,9 @@ exports.verifyEmail = async (req, res) => {
 }
 
 /**
- * Send email when forgot password
- * @param { email : string } req
- */
+   * Send email when forgot password
+   * @param { email : string } req
+   */
 exports.sendResetPasswordToken = async (req, res) => {
   const { email } = req.body
   const user = await UserModel.findByEmail(email)
@@ -139,14 +178,14 @@ exports.sendResetPasswordToken = async (req, res) => {
         )
       )
   } else {
-    genTokenOrNumberEmail(req, res, user, true)
+    generateResetTokenEmail(req, res, user)
   }
 }
 
 /**
- * Check valid of reset code
- * @param {code: string} req
- */
+   * Check valid of reset code
+   * @param {code: string} req
+   */
 exports.checkResetPasswordCode = (req, res) => {
   const { code } = req.body
 
@@ -158,10 +197,10 @@ exports.checkResetPasswordCode = (req, res) => {
 }
 
 /**
- * User reset password from forgot password email.
- * @param { code : string } req.body
- * @param { newPassword : string } req.body
- */
+   * User reset password from forgot password email.
+   * @param { code : string } req.body
+   * @param { newPassword : string } req.body
+   */
 exports.resetPassword = async (req, res) => {
   const { code, password } = req.body
   const decryptedData = checkResetToken(code)
@@ -193,9 +232,10 @@ exports.resetPassword = async (req, res) => {
     }
   } else {
     return res.status(200).send(
-      Utils.buildErrorResponse({
-        msg: { error: 'reset code expired' }
-      })
+      Utils.buildErrorResponse(
+        res.__('reset code expired'),
+        constants.ERROR_CODE.RESETCODE_EXPIRED
+      )
     )
   }
 }

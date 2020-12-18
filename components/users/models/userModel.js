@@ -7,7 +7,7 @@ const Mailer = require('../../../utils/mailer')
 exports.User = bookshelf.Model.extend({
   tableName: 'user',
   hasTimestamps: true,
-  userInfo () {
+  userInfo() {
     return this.hasOne(UserInfo)
   }
 })
@@ -84,12 +84,18 @@ exports.search = async (pageSize = 1000000, page = 1, search) => {
 }
 
 exports.create = async (userData, avatar = null) => {
+  const { email, password, social_id, first_name, last_name } = userData
   try {
     const user = await this.User.forge({
-      email: userData.email.toLowerCase(),
+      email: email.toLowerCase(),
+      password: password || '',
+      social_id: social_id || '',
+      first_name: first_name || '',
+      last_name: last_name || '',
       created_at: new Date()
     }).save()
     UserInfo.forge({
+      avatar,
       user_id: user.id
     }).save(null, { method: 'insert' })
     return user
@@ -144,23 +150,30 @@ exports.findAccount = async (first_name, last_name, birth_date) => {
   }
 }
 
-exports.genTokenOrNumberEmail = (req, res, user, isReset) => {
-  if (isReset) {
-    const expired = moment().add(5, 'minutes')
-    const encrypted = Utils.encryptResetCode(
-      JSON.stringify({ expired, user })
-    )
-    const serverName = req.headers.host.split(':')[0]
-    const resetLink = `http://${serverName}:3000/users/${encrypted.iv}-${encrypted.encryptedData}`
+exports.generateResetTokenEmail = (req, res, user) => {
+  const expired = moment().add(5, 'minutes')
+  const encrypted = Utils.encryptResetCode(
+    JSON.stringify({ expired, user })
+  )
+  const serverName = req.headers.host.split(':')[0]
+  const resetLink = `http://${serverName}:3000/users/${encrypted.iv}-${encrypted.encryptedData}`
 
-    Mailer.sendResetPasswordEmail(req, user, resetLink)
-  } else {
-    const ranNumForUser = Utils.ranNum(4)
-    const updateUser = this.update(user.id, { passcode: ranNumForUser })
-    if (updateUser) {
-      setImmediate(() => Mailer.sendSignUpInEmail(req, user, ranNumForUser))
-    } else res.status(200).send(Utils.buildErrorResponse({ msg: res.__('error update user') }))
+  Mailer.sendResetPasswordEmail(req, user, resetLink)
+
+  return res.status(200).send(
+    Utils.buildDataResponse({
+      msg: res.__(
+        'We have sent you an email, please follow the instruction in it.'
+      )
+    })
+  )
+}
+
+exports.sendEmailAndUpdate = ({ req, res, user, ranNumForUser, needUpdate }) => {
+  if (needUpdate) {
+    this.update(user.id, { passcode: ranNumForUser })
   }
+  Mailer.sendSignUpInEmail(req, user, ranNumForUser)
 
   return res.status(200).send(
     Utils.buildDataResponse({
