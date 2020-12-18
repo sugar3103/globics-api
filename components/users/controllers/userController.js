@@ -29,7 +29,7 @@ exports.signUpIn = async (req, res) => {
   } else {
     const newUser = await UserModel.create({ email, passcode: ranNumForUser })
     newUser
-      ? sendEmailAndUpdate({ req, res, newUser })
+      ? sendEmailAndUpdate({ req, res, newUser, ranNumForUser, needUpdate: false })
       : res.status(200).send(Utils.buildErrorResponse(
         res.__('Error update user'),
         constants.ERROR_CODE.UPDATEUSER_ERROR
