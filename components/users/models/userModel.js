@@ -84,14 +84,14 @@ exports.search = async (pageSize = 1000000, page = 1, search) => {
 }
 
 exports.create = async (userData, avatar = null) => {
-  const { email, password, social_id, first_name, last_name } = userData
+  const { email, passcode, social_id, first_name, last_name } = userData
   try {
     const user = await this.User.forge({
       email: email.toLowerCase(),
-      password: password || '',
       social_id: social_id || '',
       first_name: first_name || '',
       last_name: last_name || '',
+      passcode: passcode,
       created_at: new Date()
     }).save()
     UserInfo.forge({
@@ -100,6 +100,7 @@ exports.create = async (userData, avatar = null) => {
     }).save(null, { method: 'insert' })
     return user
   } catch (err) {
+    console.log('err create user', err)
     return null
   }
 }
@@ -148,38 +149,4 @@ exports.findAccount = async (first_name, last_name, birth_date) => {
     logger.error(e)
     return null
   }
-}
-
-exports.generateResetTokenEmail = (req, res, user) => {
-  const expired = moment().add(5, 'minutes')
-  const encrypted = Utils.encryptResetCode(
-    JSON.stringify({ expired, user })
-  )
-  const serverName = req.headers.host.split(':')[0]
-  const resetLink = `http://${serverName}:3000/users/${encrypted.iv}-${encrypted.encryptedData}`
-
-  Mailer.sendResetPasswordEmail(req, user, resetLink)
-
-  return res.status(200).send(
-    Utils.buildDataResponse({
-      msg: res.__(
-        'We have sent you an email, please follow the instruction in it.'
-      )
-    })
-  )
-}
-
-exports.sendEmailAndUpdate = ({ req, res, user, ranNumForUser, needUpdate }) => {
-  if (needUpdate) {
-    this.update(user.id, { passcode: ranNumForUser })
-  }
-  Mailer.sendSignUpInEmail(req, user, ranNumForUser)
-
-  return res.status(200).send(
-    Utils.buildDataResponse({
-      msg: res.__(
-        'We have sent you an email, please follow the instruction in it.'
-      )
-    })
-  )
 }

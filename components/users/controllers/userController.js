@@ -3,7 +3,8 @@ const UserInfoModel = require('../models/userInfoModel')
 const Utils = require('../../../utils/allUtils')
 const moment = require('moment')
 const constants = require('../../../common/utils/constants')
-const { checkResetToken, ranNum } = require('../../../utils/allUtils')
+const Mailer = require('../../../utils/mailer')
+const { checkResetToken, generatePasscode } = require('../../../utils/allUtils')
 const { generateResetTokenEmail } = require('../models/userModel')
 
 const jwtSecret = process.env.jwt_secret
@@ -13,29 +14,29 @@ const jwtSecret = process.env.jwt_secret
  * @param { email : string } req.body
  */
 exports.signUpIn = async (req, res) => {
-  const { email } = req.body
-  const { sendEmailAndUpdate } = UserModel
-  const ranNumForUser = ranNum(4)
+  const { isTesting, email } = req.body
+  const passcode = generatePasscode(4)
 
-  const user = await UserModel.findByEmail(email)
+  let user = await UserModel.findByEmail(email)
 
   if (user) {
-    const limitExpired = moment().subtract(5, 'minutes').isAfter(user.get('updated_at'))
-    process.env.NODE_ENV === 'dev'
-      ? sendEmailAndUpdate({ req, res, user, ranNumForUser, needUpdate: true })
-      : limitExpired
-        ? sendEmailAndUpdate({ req, res, user, ranNumForUser, needUpdate: true })
-        : res.status(200).send(Utils.buildErrorResponse(res.__('wait for 5 minutes to resend')))
+    const userId = user.get('id')
+    const limitExpired = isTesting ? true : moment().subtract(0, 'minutes').isAfter(user.get('updated_at'))
+    if (!limitExpired) {
+      return res.status(200).send(Utils.buildErrorResponse(res.__('wait for 5 minutes to resend')))
+    }
+    user = await UserModel.update(userId, { passcode })
+  } else user = await UserModel.create({ passcode, email })
+
+  if (user) {
+    setImmediate(() => { Mailer.sendSignUpInEmail(req, user, passcode) })
+    Utils.responseUser(user)
+    return res.status(201).send(Utils.buildDataResponse({ data: user }))
   } else {
-    const newUser = await UserModel.create({ email, passcode: ranNumForUser })
-    newUser
-      ? sendEmailAndUpdate({ req, res, newUser, ranNumForUser, needUpdate: false })
-      : res.status(200).send(Utils.buildErrorResponse(
-        res.__('Error update user'),
-        constants.ERROR_CODE.UPDATEUSER_ERROR
-      ))
+    return res.status(200).send(Utils.buildErrorResponse(res.__('msg'), constants.ERROR_CODE.SAVE_ERROR))
   }
 }
+
 /**
    * Check passcode from user is matched with passcode in DB
    * @param { email : string} req.body

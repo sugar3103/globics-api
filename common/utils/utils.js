@@ -6,7 +6,7 @@ const moment = require('moment')
 const algorithm = process.env.algorithm
 const secret = process.env.secret
 
-exports.ranNum = (num) => Math.random().toFixed(num).substr(`-${num}`)
+exports.generatePasscode = (num = 4) => Math.random().toFixed(num).substr(`-${num}`)
 
 exports.hash = (password, salt = null, digest = null) => {
   salt = salt || crypto.randomBytes(16).toString('base64')

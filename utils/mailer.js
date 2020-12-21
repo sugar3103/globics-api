@@ -23,7 +23,7 @@ const sendEmail = async (mailOptions) => {
   }
 }
 
-exports.sendSignUpInEmail = async (req, user, ranNum) => {
+exports.sendSignUpInEmail = async (req, user, passcode) => {
   // send mail with defined transport object
   const mailOptions = {
     from: mailer_name, // sender address
@@ -33,7 +33,7 @@ exports.sendSignUpInEmail = async (req, user, ranNum) => {
            </br>
           Please sign in with this activation code
           <br>
-          <h1>${ranNum}</h1>`
+          <h1>${passcode}</h1>`
   }
 
   for (let i = 0; i < 3; i++) {
